@@ -211,7 +211,7 @@ type FrontendLineItem struct {
 }
 
 func ListFrontendModels(ctx context.Context) ([]FrontendModel, error) {
-	req, err := http.NewRequestWithContext(ctx, "GET", "https://openrouter.ai/api/frontend/models", nil)
+	req, err := http.NewRequestWithContext(ctx, "GET", "https://openrouter.ai/api/frontend/v1/catalog/models", nil)
 	if err != nil {
 		return nil, err
 	}
