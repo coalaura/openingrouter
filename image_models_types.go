@@ -5,7 +5,7 @@ type ImageModelsListResponse struct {
 	Data []ImageModel `json:"data"`
 }
 
-// ImageModel represents an image generation model available on OpenRouter.
+// ImageModel represents an image generation model.
 type ImageModel struct {
 	ID                  string                   `json:"id"`
 	Name                string                   `json:"name"`

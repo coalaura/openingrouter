@@ -11,7 +11,7 @@ const (
 )
 
 type iterable interface {
-	~string | ~[]FrontendModel | ~[]Model | ~[]ImageModel
+	~string | ~[]FrontendModel | ~[]Model | ~[]ImageModel | ~[]GeneratedImage
 }
 
 func tCreateClient(t testing.TB) *Client {
