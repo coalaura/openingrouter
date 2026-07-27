@@ -1,2 +1,6 @@
-github.com/coalaura/byteconv v0.0.0-20260219201828-c79809dc218c h1:051EM0onnEeDIZ/qqIhCW3QoR/M5iC3CQQfTiHTfE8Q=
-github.com/coalaura/byteconv v0.0.0-20260219201828-c79809dc218c/go.mod h1:0UH4yRUmQnRcvT8amAaLDpasKBPWxkmDKaHVnI3sn5k=
+github.com/coalaura/byteconv v0.1.0 h1:LSS0zi3STk/y81YNrjkv9OKwZZ1CS5TcOmM1JfIWQYQ=
+github.com/coalaura/byteconv v0.1.0/go.mod h1:0UH4yRUmQnRcvT8amAaLDpasKBPWxkmDKaHVnI3sn5k=
+github.com/google/go-cmp v0.6.0 h1:ofyhxvXcZhMsU5ulbFiLKl/XBFqE1GSq7atu8tAmTRI=
+github.com/google/go-cmp v0.6.0/go.mod h1:17dUlkBOakJ0+DkrSSNjCkIjxS6bF9zb3elmeNGIjoY=
+github.com/google/go-querystring v1.2.0 h1:yhqkPbu2/OH+V9BfpCVPZkNmUXhb2gBxJArfhIxNtP0=
+github.com/google/go-querystring v1.2.0/go.mod h1:8IFJqpSRITyJ8QhQ13bmbeMBDfmeEJZD5A0egEOmkqU=

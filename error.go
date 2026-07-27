@@ -1,28 +1,33 @@
 package openingrouter
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
-	"io"
 	"net/http"
 	"strconv"
 	"strings"
 )
 
-type errorResponse[T any] struct {
-	Error errorData[T] `json:"error"`
+type errorResponse struct {
+	Error errorData `json:"error"`
 }
 
-type errorData[T any] struct {
-	Message  string `json:"message"`
-	Code     int64  `json:"code"`
-	Metadata T      `json:"metadata"`
+type errorData struct {
+	Name    string `json:"name"`
+	Message string `json:"message"`
+	Code    int64  `json:"code"`
+
+	Metadata *ProviderError `json:"metadata"`
 }
 
 type OpenRouterError struct {
 	Message string
 	Code    int64
+}
+
+type ApiError struct {
+	Name    string
+	Message string
 }
 
 type ProviderError struct {
@@ -47,29 +52,28 @@ func (o *OpenRouterError) Error() string {
 	return sb.String()
 }
 
-func (p *ProviderError) Data() any {
-	if p.Raw == "" {
-		return nil
-	}
+func (a *ApiError) Error() string {
+	var sb strings.Builder
 
-	var data any
+	sb.Grow(10 + len(a.Name) + 2 + len(a.Message))
 
-	err := json.Unmarshal([]byte(p.Raw), &data)
-	if err != nil {
-		return nil
-	}
+	sb.WriteString("api error ")
+	sb.WriteString(a.Name)
+	sb.WriteString(": ")
+	sb.WriteString(a.Message)
 
-	return data
+	return sb.String()
 }
 
 func (p *ProviderError) Error() string {
 	var sb strings.Builder
 
-	sb.Grow(len(p.ProviderName) + 17 + len(p.Raw))
+	message := parseSubErrorMessage(p.Raw)
 
-	sb.WriteString(p.ProviderName)
-	sb.WriteString(" provider error: ")
-	sb.WriteString(p.Raw)
+	sb.Grow(17 + len(message))
+
+	sb.WriteString("provider error: ")
+	sb.WriteString(message)
 
 	return sb.String()
 }
@@ -79,33 +83,93 @@ func AsOpenRouterError(resp *http.Response, err error) error {
 		return err
 	}
 
-	buf, err := io.ReadAll(resp.Body)
+	defer resp.Body.Close()
+
+	var meta errorResponse
+
+	err = json.NewDecoder(resp.Body).Decode(&meta)
 	if err != nil {
-		return err
+		return fmt.Errorf("http: %s", resp.Status)
 	}
 
-	rd := bytes.NewReader(buf)
+	info := meta.Error
 
-	var providerMeta errorResponse[ProviderError]
-
-	err = json.NewDecoder(rd).Decode(&providerMeta)
-	if err == nil {
-		return &providerMeta.Error.Metadata
+	if info.Metadata != nil {
+		return info.Metadata
 	}
 
-	rd.Seek(0, io.SeekStart)
-
-	var anyMeta errorResponse[any]
-
-	err = json.NewDecoder(rd).Decode(&providerMeta)
-	if err == nil {
-		info := anyMeta.Error
-
-		return &OpenRouterError{
-			Message: info.Message,
-			Code:    info.Code,
+	if info.Name != "" {
+		return &ApiError{
+			Name:    info.Name,
+			Message: parseSubErrorMessage(info.Message),
 		}
 	}
 
-	return fmt.Errorf("http: %s", resp.Status)
+	return &OpenRouterError{
+		Message: parseSubErrorMessage(info.Message),
+		Code:    info.Code,
+	}
+}
+
+func parseSubErrorMessage(raw string) string {
+	if !strings.HasPrefix(raw, "{") && !strings.HasPrefix(raw, "[") {
+		return raw
+	}
+
+	var root any
+
+	err := json.Unmarshal([]byte(raw), &root)
+	if err != nil {
+		return raw
+	}
+
+	// direct string error message
+	str, ok := root.(string)
+	if ok {
+		return str
+	}
+
+	// error object
+	data, ok := root.(map[string]any)
+	if !ok {
+		// slice of error objects
+		sl, ok := root.([]any)
+		if !ok || len(sl) == 0 {
+			return raw
+		}
+
+		data, ok = sl[0].(map[string]any)
+		if !ok {
+			return raw
+		}
+	}
+
+	// sub-error object
+	errorS, ok := data["error"]
+	if ok {
+		sub, ok := errorS.(map[string]any)
+		if ok {
+			data = sub
+		}
+	}
+
+	// message string
+	message, ok := data["message"]
+	if ok {
+		str, ok = message.(string)
+		if ok {
+			return str
+		}
+	}
+
+	// error string
+	errorS, ok = data["error"]
+	if ok {
+		str, ok = errorS.(string)
+		if ok {
+			return str
+		}
+	}
+
+	return raw
 }
