@@ -1,22 +1,5 @@
 package openingrouter
 
-// ModelsListResponse is the root response for the models list endpoints.
-type ModelsListResponse struct {
-	Data       []Model         `json:"data"`
-	TotalCount int             `json:"total_count"`
-	Links      ModelsListLinks `json:"links"`
-}
-
-// ModelsListLinks represents the pagination links of a models list response.
-type ModelsListLinks struct {
-	Next *string `json:"next"`
-}
-
-// ModelResponse is the root response for the single model endpoint.
-type ModelResponse struct {
-	Data Model `json:"data"`
-}
-
 // Model represents an AI model available on OpenRouter.
 type Model struct {
 	ID                  string                  `json:"id"`
@@ -179,31 +162,6 @@ const (
 	ParameterReasoningEffort     Parameter = "reasoning_effort"
 	ParameterWebSearchOptions    Parameter = "web_search_options"
 	ParameterVerbosity           Parameter = "verbosity"
-)
-
-// InputModality is a modality a model accepts as input.
-type InputModality string
-
-const (
-	InputModalityText  InputModality = "text"
-	InputModalityImage InputModality = "image"
-	InputModalityFile  InputModality = "file"
-	InputModalityAudio InputModality = "audio"
-	InputModalityVideo InputModality = "video"
-)
-
-// OutputModality is a modality a model produces as output.
-type OutputModality string
-
-const (
-	OutputModalityText          OutputModality = "text"
-	OutputModalityImage         OutputModality = "image"
-	OutputModalityEmbeddings    OutputModality = "embeddings"
-	OutputModalityAudio         OutputModality = "audio"
-	OutputModalityVideo         OutputModality = "video"
-	OutputModalityRerank        OutputModality = "rerank"
-	OutputModalitySpeech        OutputModality = "speech"
-	OutputModalityTranscription OutputModality = "transcription"
 )
 
 // InstructType is the instruction format type of a model.

@@ -1,10 +1,5 @@
 package openingrouter
 
-// ImageModelsListResponse is the root response for the image models list endpoint.
-type ImageModelsListResponse struct {
-	Data []ImageModel `json:"data"`
-}
-
 // ImageModel represents an image generation model.
 type ImageModel struct {
 	ID                  string                   `json:"id"`

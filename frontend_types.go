@@ -1,10 +1,5 @@
 package openingrouter
 
-// FrontendModelsResponse is the root response for the catalog models endpoint.
-type FrontendModelsResponse struct {
-	Data []FrontendModel `json:"data"`
-}
-
 // FrontendModel represents a model in the frontend API.
 type FrontendModel struct {
 	Slug                  string                   `json:"slug"`

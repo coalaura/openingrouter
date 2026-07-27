@@ -19,7 +19,7 @@ func ListFrontendModels(ctx context.Context) ([]FrontendModel, error) {
 
 	defer resp.Body.Close()
 
-	var result FrontendModelsResponse
+	var result OpenRouterResponse[[]FrontendModel]
 
 	err = json.NewDecoder(resp.Body).Decode(&result)
 	if err != nil {
