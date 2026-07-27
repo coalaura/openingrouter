@@ -74,12 +74,12 @@ func (p *ProviderError) Error() string {
 	return sb.String()
 }
 
-func ParseOpenRouterError(response *http.Response, err error) error {
+func AsOpenRouterError(resp *http.Response, err error) error {
 	if err != nil {
 		return err
 	}
 
-	buf, err := io.ReadAll(response.Body)
+	buf, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return err
 	}
@@ -107,5 +107,5 @@ func ParseOpenRouterError(response *http.Response, err error) error {
 		}
 	}
 
-	return fmt.Errorf("http: %s", response.Status)
+	return fmt.Errorf("http: %s", resp.Status)
 }

@@ -14,7 +14,7 @@ func ListFrontendModels(ctx context.Context) ([]FrontendModel, error) {
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
-		return nil, err
+		return nil, AsOpenRouterError(resp, err)
 	}
 
 	defer resp.Body.Close()
