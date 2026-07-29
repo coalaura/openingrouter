@@ -10,7 +10,7 @@ func (c *Client) CreateChatCompletion(ctx context.Context, request ChatCompletio
 		request.Stream = new(false)
 	}
 
-	req, err := c.NewRequest("POST", "chat/completions", request)
+	req, err := c.NewRequest(ctx, "POST", "chat/completions", request)
 	if err != nil {
 		return nil, err
 	}
@@ -41,7 +41,7 @@ func (c *Client) CreateChatCompletionStream(ctx context.Context, request ChatCom
 		request.Stream = new(true)
 	}
 
-	req, err := c.NewRequest("POST", "chat/completions", request)
+	req, err := c.NewRequest(ctx, "POST", "chat/completions", request)
 	if err != nil {
 		return nil, err
 	}

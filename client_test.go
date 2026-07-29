@@ -1,11 +1,14 @@
 package openingrouter
 
-import "testing"
+import (
+	"context"
+	"testing"
+)
 
 func TestNewRequest(t *testing.T) {
 	client := tCreateClient(t)
 
-	req, err := client.NewRequest("GET", "models", &ListModelsOptions{
+	req, err := client.NewRequest(context.Background(), "GET", "models", &ListModelsOptions{
 		Limit: new(10),
 	})
 

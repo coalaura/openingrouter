@@ -1,13 +1,14 @@
 package openingrouter
 
 import (
+	"context"
 	"testing"
 )
 
 func TestAsHttpError(t *testing.T) {
 	client := tCreateClient(t)
 
-	req, err := client.NewRequest("GET", "does/not/exist", nil)
+	req, err := client.NewRequest(context.Background(), "GET", "does/not/exist", nil)
 
 	tAssertNil(t, err)
 
@@ -20,7 +21,7 @@ func TestAsHttpError(t *testing.T) {
 func TestAsApiError(t *testing.T) {
 	client := tCreateClient(t)
 
-	req, err := client.NewRequest("GET", "models", nil)
+	req, err := client.NewRequest(context.Background(), "GET", "models", nil)
 
 	tAssertNil(t, err)
 
@@ -53,7 +54,7 @@ func TestAsProviderError(t *testing.T) {
 		},
 	}
 
-	req, err := client.NewRequest("POST", "chat/completions", data)
+	req, err := client.NewRequest(context.Background(), "POST", "chat/completions", data)
 
 	tAssertNil(t, err)
 

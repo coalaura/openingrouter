@@ -6,7 +6,7 @@ import (
 )
 
 func (c *Client) ListImageModels(ctx context.Context) ([]ImageModel, error) {
-	req, err := c.NewRequest("GET", "images/models", nil)
+	req, err := c.NewRequest(ctx, "GET", "images/models", nil)
 	if err != nil {
 		return nil, err
 	}

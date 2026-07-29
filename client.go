@@ -2,6 +2,7 @@ package openingrouter
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -25,7 +26,7 @@ type Option func(*Client)
 
 var defaultClient = &http.Client{}
 
-func (c *Client) NewRequest(method, path string, data any) (*http.Request, error) {
+func (c *Client) NewRequest(ctx context.Context, method, path string, data any) (*http.Request, error) {
 	uri := c.base.ResolveReference(&url.URL{
 		Path: path,
 	})
@@ -57,7 +58,7 @@ func (c *Client) NewRequest(method, path string, data any) (*http.Request, error
 		}
 	}
 
-	req, err := http.NewRequest(method, uri.String(), body)
+	req, err := http.NewRequestWithContext(ctx, method, uri.String(), body)
 	if err != nil {
 		return nil, err
 	}

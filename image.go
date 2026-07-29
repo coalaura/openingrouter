@@ -10,7 +10,7 @@ func (c *Client) GenerateImage(ctx context.Context, request ImageGenerationReque
 		request.Stream = new(false)
 	}
 
-	req, err := c.NewRequest("POST", "images", request)
+	req, err := c.NewRequest(ctx, "POST", "images", request)
 	if err != nil {
 		return nil, err
 	}
@@ -35,7 +35,7 @@ func (c *Client) GenerateImageStream(ctx context.Context, request ImageGeneratio
 		request.Stream = new(true)
 	}
 
-	req, err := c.NewRequest("POST", "images", request)
+	req, err := c.NewRequest(ctx, "POST", "images", request)
 	if err != nil {
 		return nil, err
 	}

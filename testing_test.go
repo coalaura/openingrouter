@@ -3,6 +3,7 @@ package openingrouter
 import (
 	"os"
 	"reflect"
+	"strings"
 	"testing"
 )
 
@@ -55,6 +56,16 @@ func tAssertEquals[T comparable](t testing.TB, actual, expected T) {
 	}
 
 	t.Fatalf("expected %v, got: %v", expected, actual)
+}
+
+func tAssertContainsFold(t testing.TB, actual, contains string) {
+	t.Helper()
+
+	if strings.Contains(strings.ToLower(actual), contains) {
+		return
+	}
+
+	t.Fatalf("expected %q to contain %q", actual, contains)
 }
 
 func tAssertNil(t testing.TB, actual any) {
