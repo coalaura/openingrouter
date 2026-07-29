@@ -12,9 +12,9 @@ const (
 )
 
 type iterable interface {
-	~string | ~[]byte |
+	~string | ~[]byte | ~[]float64 |
 		~[]FrontendModel | ~[]Model | ~[]ImageModel |
-		~[]GeneratedImage | ~[]ChatChoice
+		~[]GeneratedImage | ~[]ChatChoice | ~[]Embedding
 }
 
 func tCreateClient(t testing.TB) *Client {
