@@ -41,7 +41,6 @@ stream, err := client.CreateChatCompletionStream(ctx, openingrouter.ChatCompleti
         Content: openingrouter.ChatContent{Text: "Hello"},
     }},
 })
-
 if err != nil {
     return err
 }
@@ -55,10 +54,11 @@ for {
     }
 
     if err != nil {
+        // *ChatStreamError when the stream fails after it started
         return err
     }
 
-	// chunk.Choices[0].Delta.Content
+    // chunk.Choices[0].Delta.Content
 }
 ```
 
@@ -87,7 +87,7 @@ resp, err := client.GenerateImage(ctx, openingrouter.ImageGenerationRequest{
 // resp.Data[i].B64JSON, resp.Data[i].MediaType
 ```
 
-Streaming via `GenerateImageStream`. List models with `ListImageModels`.
+Streaming via `GenerateImageStream` (mid-stream failures return `*ImageStreamError` from `Recv`). List models with `ListImageModels`.
 
 ## Speech
 
@@ -157,7 +157,32 @@ models, err := openingrouter.ListFrontendModels(ctx)
 | `*ApiError` | Named API / validation error |
 | `*ProviderError` | Upstream provider error |
 
-Network failures are returned as-is. Streaming endpoints may also surface mid-stream errors on the chunk/event itself.
+Network failures are returned as-is.
+
+Streaming endpoints that fail after the response has started surface the failure from `Recv` as a typed error (not as a field on the chunk):
+
+| Type | Endpoint |
+|------|----------|
+| `*ChatStreamError` | `CreateChatCompletionStream` |
+| `*ImageStreamError` | `GenerateImageStream` |
+
+Their `Error()` strings match the same style as `*OpenRouterError` (`openrouter code <code>: <message>`, falling back to `openrouter: <message>` when no code is present). Nested provider JSON in the message is cleaned the same way as HTTP errors. Inspect fields with `errors.As` / `errors.AsType`:
+
+```go
+chunk, err := stream.Recv()
+if err != nil {
+    if errors.Is(err, io.EOF) {
+        break
+    }
+
+    if streamErr, ok := errors.AsType[*openingrouter.ChatStreamError](err); ok {
+        // streamErr.Code, streamErr.Metadata
+        return streamErr
+    }
+
+    return err
+}
+```
 
 ## Streams
 
@@ -165,12 +190,12 @@ Network failures are returned as-is. Streaming endpoints may also surface mid-st
 
 ```go
 type OpenrouterStream[T any] interface {
-    Recv() (T, error) // io.EOF when done
+    Recv() (T, error) // io.EOF when done; typed stream error on mid-stream failure
     Close()
 }
 ```
 
-Always `defer stream.Close()`.
+Always `defer stream.Close()`. Chunk types that carry an in-band error implement it privately; `Recv` promotes that error so callers only need the usual `err != nil` path.
 
 ## Layout
 
