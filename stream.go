@@ -12,11 +12,13 @@ import (
 	"sync/atomic"
 )
 
+// OpenrouterStream represents a stream of typed elements.
 type OpenrouterStream[T any] interface {
 	Recv() (T, error)
 	Close()
 }
 
+// ServerSentEventsStream receives Server-Sent Events from an HTTP response.
 type ServerSentEventsStream[T any] struct {
 	stream    <-chan T
 	done      chan struct{}
@@ -24,6 +26,7 @@ type ServerSentEventsStream[T any] struct {
 	closeOnce sync.Once
 }
 
+// JsonResponseStream wraps a slice of chunks as a stream.
 type JsonResponseStream[T any] struct {
 	chunks []T
 	index  atomic.Uint64
@@ -144,12 +147,14 @@ func NewServerSentEventsStream[T any](ctx context.Context, resp *http.Response) 
 	return sse
 }
 
+// NewJsonResponseStream returns a new JsonResponseStream initialized with chunks.
 func NewJsonResponseStream[T any](chunks ...T) *JsonResponseStream[T] {
 	return &JsonResponseStream[T]{
 		chunks: chunks,
 	}
 }
 
+// IsResponseServerSentEventsStream reports whether the HTTP response is a Server-Sent Events stream.
 func IsResponseServerSentEventsStream(response *http.Response) bool {
 	contentType := strings.ToLower(response.Header.Get("Content-Type"))
 

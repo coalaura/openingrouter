@@ -13,6 +13,7 @@ import (
 	"github.com/google/go-querystring/query"
 )
 
+// Client represents an OpenRouter API client.
 type Client struct {
 	client *http.Client
 	base   *url.URL
@@ -22,10 +23,12 @@ type Client struct {
 	referer string
 }
 
+// Option configures an OpenRouter API client.
 type Option func(*Client)
 
 var defaultClient = &http.Client{}
 
+// NewRequest constructs a new HTTP request targeting the OpenRouter API.
 func (c *Client) NewRequest(ctx context.Context, method, path string, data any) (*http.Request, error) {
 	uri := c.base.ResolveReference(&url.URL{
 		Path: path,
@@ -81,6 +84,7 @@ func (c *Client) NewRequest(ctx context.Context, method, path string, data any) 
 	return req, nil
 }
 
+// Do sends an HTTP request and processes any returned API errors.
 func (c *Client) Do(req *http.Request) (*http.Response, error) {
 	resp, err := c.client.Do(req)
 	if err != nil {

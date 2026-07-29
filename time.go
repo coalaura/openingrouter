@@ -18,6 +18,7 @@ var timeFormats = []string{
 	"2006-01-02",                          // Date only
 }
 
+// UnmarshalJSON implements the json.Unmarshaler interface for FlexibleTime.
 func (ft *FlexibleTime) UnmarshalJSON(data []byte) error {
 	str := strings.Trim(string(data), `"`)
 	if str == "null" || str == "" {
@@ -38,6 +39,7 @@ func (ft *FlexibleTime) UnmarshalJSON(data []byte) error {
 	return err
 }
 
+// MarshalJSON implements the json.Marshaler interface for FlexibleTime.
 func (ft FlexibleTime) MarshalJSON() ([]byte, error) {
 	if ft.Time.IsZero() {
 		return []byte("null"), nil

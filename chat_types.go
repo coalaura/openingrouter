@@ -185,6 +185,7 @@ type ChatContent struct {
 	Parts []ChatContentPart
 }
 
+// MarshalJSON implements the json.Marshaler interface for ChatContent.
 func (cc ChatContent) MarshalJSON() ([]byte, error) {
 	if len(cc.Parts) > 0 {
 		return json.Marshal(cc.Parts)
@@ -193,6 +194,7 @@ func (cc ChatContent) MarshalJSON() ([]byte, error) {
 	return json.Marshal(cc.Text)
 }
 
+// UnmarshalJSON implements the json.Unmarshaler interface for ChatContent.
 func (cc *ChatContent) UnmarshalJSON(data []byte) error {
 	if bytes.Equal(data, []byte("null")) {
 		*cc = ChatContent{}
@@ -334,6 +336,7 @@ type ChatToolChoice struct {
 	Function *ChatToolChoiceFunction `json:"function,omitempty"`
 }
 
+// MarshalJSON implements the json.Marshaler interface for ChatToolChoice.
 func (tc ChatToolChoice) MarshalJSON() ([]byte, error) {
 	if tc.Mode != "" {
 		return json.Marshal(string(tc.Mode))

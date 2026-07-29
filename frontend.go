@@ -6,6 +6,7 @@ import (
 	"net/http"
 )
 
+// ListFrontendModels retrieves the model catalog from the OpenRouter frontend API.
 func ListFrontendModels(ctx context.Context) ([]FrontendModel, error) {
 	req, err := http.NewRequestWithContext(ctx, "GET", "https://openrouter.ai/api/frontend/v1/catalog/models", nil)
 	if err != nil {

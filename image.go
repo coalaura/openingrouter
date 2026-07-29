@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 )
 
+// GenerateImage generates images based on the provided request.
 func (c *Client) GenerateImage(ctx context.Context, request ImageGenerationRequest) (*ImageGenerationResponse, error) {
 	if request.Stream == nil || *request.Stream {
 		request.Stream = new(false)
@@ -30,6 +31,7 @@ func (c *Client) GenerateImage(ctx context.Context, request ImageGenerationReque
 	return &result, nil
 }
 
+// GenerateImageStream generates images as a stream of events.
 func (c *Client) GenerateImageStream(ctx context.Context, request ImageGenerationRequest) (OpenrouterStream[ImageStreamEvent], error) {
 	if request.Stream == nil {
 		request.Stream = new(true)

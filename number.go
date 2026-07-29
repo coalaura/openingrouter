@@ -10,6 +10,7 @@ import (
 // StringifiedNumber represents a number that was stringified in JSON
 type StringifiedNumber float64
 
+// UnmarshalJSON implements the json.Unmarshaler interface for StringifiedNumber.
 func (sn *StringifiedNumber) UnmarshalJSON(data []byte) error {
 	// Handle null as zero
 	if bytes.Equal(data, []byte("null")) || bytes.Equal(data, []byte("\"\"")) {
@@ -40,6 +41,7 @@ func (sn *StringifiedNumber) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+// MarshalJSON implements the json.Marshaler interface for StringifiedNumber.
 func (sn StringifiedNumber) MarshalJSON() ([]byte, error) {
 	return json.Marshal(float64(sn))
 }

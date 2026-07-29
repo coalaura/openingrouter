@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 )
 
+// CreateChatCompletion sends a chat completion request and returns the response.
 func (c *Client) CreateChatCompletion(ctx context.Context, request ChatCompletionRequest) (*ChatCompletionResponse, error) {
 	if request.Stream == nil || *request.Stream {
 		request.Stream = new(false)
@@ -36,6 +37,7 @@ func (c *Client) CreateChatCompletion(ctx context.Context, request ChatCompletio
 	return &result, nil
 }
 
+// CreateChatCompletionStream sends a streaming chat completion request and returns a stream of completion chunks.
 func (c *Client) CreateChatCompletionStream(ctx context.Context, request ChatCompletionRequest) (OpenrouterStream[ChatStreamChunk], error) {
 	if request.Stream == nil {
 		request.Stream = new(true)

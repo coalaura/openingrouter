@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 )
 
+// ListImageModels retrieves the list of image generation models.
 func (c *Client) ListImageModels(ctx context.Context) ([]ImageModel, error) {
 	req, err := c.NewRequest(ctx, "GET", "images/models", nil)
 	if err != nil {

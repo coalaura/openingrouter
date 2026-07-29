@@ -20,22 +20,26 @@ type errorData struct {
 	Metadata *ProviderError `json:"metadata"`
 }
 
+// OpenRouterError represents an error response returned by the OpenRouter API.
 type OpenRouterError struct {
 	Message string
 	Code    int64
 }
 
+// ApiError represents a general API error returned by OpenRouter.
 type ApiError struct {
 	Name    string
 	Message string
 }
 
+// ProviderError represents an error returned by an underlying model provider.
 type ProviderError struct {
 	Raw          string `json:"raw"`
 	ProviderName string `json:"provider_name"`
 	IsBYOK       bool   `json:"is_byok"`
 }
 
+// Error returns the formatted string representation of the OpenRouter error.
 func (o *OpenRouterError) Error() string {
 	var (
 		sb  strings.Builder
@@ -52,6 +56,7 @@ func (o *OpenRouterError) Error() string {
 	return sb.String()
 }
 
+// Error returns the formatted string representation of the API error.
 func (a *ApiError) Error() string {
 	var sb strings.Builder
 
@@ -65,6 +70,7 @@ func (a *ApiError) Error() string {
 	return sb.String()
 }
 
+// Error returns the formatted string representation of the provider error.
 func (p *ProviderError) Error() string {
 	var sb strings.Builder
 
@@ -78,6 +84,7 @@ func (p *ProviderError) Error() string {
 	return sb.String()
 }
 
+// AsOpenRouterError converts an HTTP response status or error into a structured OpenRouter error.
 func AsOpenRouterError(resp *http.Response, err error) error {
 	if err != nil {
 		return err
