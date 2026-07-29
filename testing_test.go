@@ -1,6 +1,7 @@
 package openingrouter
 
 import (
+	"fmt"
 	"os"
 	"reflect"
 	"strings"
@@ -15,6 +16,16 @@ type iterable interface {
 	~string | ~[]byte | ~[]float64 |
 		~[]FrontendModel | ~[]Model | ~[]ImageModel |
 		~[]GeneratedImage | ~[]ChatChoice | ~[]Embedding
+}
+
+var testUsage float64
+
+func TestMain(m *testing.M) {
+	code := m.Run()
+
+	fmt.Fprintf(os.Stderr, "test usage: $%.6f\n", testUsage)
+
+	os.Exit(code)
 }
 
 func tCreateClient(t testing.TB) *Client {

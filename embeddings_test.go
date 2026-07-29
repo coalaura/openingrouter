@@ -26,4 +26,11 @@ func TestCreateEmbeddings(t *testing.T) {
 	tAssertEquals(t, embedding.Object, EmbeddingObjectEmbedding)
 	tAssertEquals(t, embedding.Index, 0)
 	tAssertMinLen(t, embedding.Embedding.Floats, 1)
+
+	usage := resp.Usage
+
+	tAssertNotNil(t, usage)
+	tAssertNotNil(t, usage.Cost)
+
+	testUsage += *usage.Cost
 }

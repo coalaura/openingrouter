@@ -25,6 +25,13 @@ func TestGenerateImage(t *testing.T) {
 
 	tAssertMinLen(t, image.MediaType, 8)
 	tAssertMinLen(t, image.B64JSON, 32)
+
+	usage := resp.Usage
+
+	tAssertNotNil(t, usage)
+	tAssertNotNil(t, usage.Cost)
+
+	testUsage += *usage.Cost
 }
 
 func TestGenerateImageStream(t *testing.T) {
@@ -41,7 +48,10 @@ func TestGenerateImageStream(t *testing.T) {
 
 	tAssertNil(t, err)
 
-	var result *ImageStreamEvent
+	var (
+		result *ImageStreamEvent
+		usage  *Usage
+	)
 
 	for {
 		entry, err := stream.Recv()
@@ -52,9 +62,18 @@ func TestGenerateImageStream(t *testing.T) {
 		if entry.Type == ImageStreamEventTypeCompleted {
 			result = &entry
 		}
+
+		if usage == nil && entry.Usage != nil {
+			usage = entry.Usage
+		}
 	}
 
 	tAssertNotNil(t, result)
 	tAssertMinLen(t, result.MediaType, 8)
 	tAssertMinLen(t, result.B64JSON, 32)
+
+	tAssertNotNil(t, usage)
+	tAssertNotNil(t, usage.Cost)
+
+	testUsage += *usage.Cost
 }

@@ -28,8 +28,9 @@ type SpeechProviderPreferences struct {
 // read. ContentType is the media type of the bytestream and varies by the
 // requested format (audio/mpeg for mp3, audio/pcm for 16-bit little-endian pcm).
 type SpeechResponse struct {
-	ContentType string
-	Body        io.ReadCloser
+	GenerationID string
+	ContentType  string
+	Body         io.ReadCloser
 }
 
 // SpeechResponseFormat is the audio encoding of a synthesized bytestream. It

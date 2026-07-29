@@ -21,6 +21,7 @@ func TestCreateSpeech(t *testing.T) {
 
 	defer resp.Body.Close()
 
+	tAssertMinLen(t, resp.GenerationID, 16)
 	tAssertEquals(t, resp.ContentType, "audio/mpeg")
 
 	var header [3]byte
@@ -30,4 +31,7 @@ func TestCreateSpeech(t *testing.T) {
 	tAssertNil(t, err)
 
 	tAssertMP3Header(t, header[:n])
+
+	// roughly accurate for csm-1b
+	testUsage += 0.000077
 }

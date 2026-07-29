@@ -26,4 +26,11 @@ func TestCreateTranscription(t *testing.T) {
 
 	tAssertContainsFold(t, resp.Text, "hello")
 	tAssertContainsFold(t, resp.Text, "world")
+
+	usage := resp.Usage
+
+	tAssertNotNil(t, usage)
+	tAssertNotNil(t, usage.Cost)
+
+	testUsage += *usage.Cost
 }

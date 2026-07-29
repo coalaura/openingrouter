@@ -32,6 +32,13 @@ func TestCreateChatCompletion(t *testing.T) {
 
 	tAssertEquals(t, message.Role, ChatRoleAssistant)
 	tAssertEquals(t, message.Content.Text, "hello world")
+
+	usage := resp.Usage
+
+	tAssertNotNil(t, usage)
+	tAssertNotNil(t, usage.Cost)
+
+	testUsage += *usage.Cost
 }
 
 func TestCreateChatCompletionStream(t *testing.T) {
@@ -57,6 +64,7 @@ func TestCreateChatCompletionStream(t *testing.T) {
 	var (
 		role   ChatRole
 		result strings.Builder
+		usage  *ChatUsage
 	)
 
 	for {
@@ -78,8 +86,17 @@ func TestCreateChatCompletionStream(t *testing.T) {
 				result.WriteString(delta.Content)
 			}
 		}
+
+		if usage == nil && entry.Usage != nil {
+			usage = entry.Usage
+		}
 	}
 
 	tAssertEquals(t, role, ChatRoleAssistant)
 	tAssertEquals(t, result.String(), "hello world")
+
+	tAssertNotNil(t, usage)
+	tAssertNotNil(t, usage.Cost)
+
+	testUsage += *usage.Cost
 }

@@ -18,7 +18,8 @@ func (c *Client) CreateSpeech(ctx context.Context, request SpeechRequest) (*Spee
 	}
 
 	return &SpeechResponse{
-		ContentType: resp.Header.Get("Content-Type"),
-		Body:        resp.Body,
+		GenerationID: resp.Header.Get("X-Generation-Id"),
+		ContentType:  resp.Header.Get("Content-Type"),
+		Body:         resp.Body,
 	}, nil
 }
