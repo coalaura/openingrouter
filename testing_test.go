@@ -11,7 +11,9 @@ const (
 )
 
 type iterable interface {
-	~string | ~[]FrontendModel | ~[]Model | ~[]ImageModel | ~[]GeneratedImage | ~[]ChatChoice
+	~string | ~[]byte |
+		~[]FrontendModel | ~[]Model | ~[]ImageModel |
+		~[]GeneratedImage | ~[]ChatChoice
 }
 
 func tCreateClient(t testing.TB) *Client {
@@ -91,4 +93,22 @@ func tAssertNotNil(t testing.TB, actual any) {
 	}
 
 	t.Fatal("expected not nil, got: nil")
+}
+
+func tAssertMP3Header(t testing.TB, header []byte) {
+	t.Helper()
+
+	if len(header) >= 3 {
+		// ID3v2 container header
+		if header[0] == 'I' && header[1] == 'D' && header[2] == '3' {
+			return
+		}
+
+		// Raw MPEG frame sync
+		if header[0] == 0xFF && (header[1]&0xE0) == 0xE0 {
+			return
+		}
+	}
+
+	t.Fatalf("expected mp3 header, got: %v", header)
 }

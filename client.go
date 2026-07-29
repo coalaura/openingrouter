@@ -30,7 +30,10 @@ func (c *Client) NewRequest(method, path string, data any) (*http.Request, error
 		Path: path,
 	})
 
-	var body io.Reader
+	var (
+		body        io.Reader
+		contentType string
+	)
 
 	if data != nil {
 		if method == "GET" {
@@ -49,6 +52,8 @@ func (c *Client) NewRequest(method, path string, data any) (*http.Request, error
 			}
 
 			body = &buf
+
+			contentType = "application/json"
 		}
 	}
 
@@ -58,6 +63,11 @@ func (c *Client) NewRequest(method, path string, data any) (*http.Request, error
 	}
 
 	req.Header.Set("Authorization", c.token)
+	req.Header.Set("User-Agent", "openingrouter")
+
+	if contentType != "" {
+		req.Header.Set("Content-Type", contentType)
+	}
 
 	if c.referer != "" {
 		req.Header.Set("HTTP-Referer", c.referer)
