@@ -3,6 +3,7 @@ package openingrouter
 import (
 	"bytes"
 	"encoding/json"
+	"strconv"
 	"strings"
 )
 
@@ -773,6 +774,14 @@ type ChatStreamChunk struct {
 	Error              *ChatStreamError    `json:"error,omitempty"`
 }
 
+func (c ChatStreamChunk) streamError() error {
+	if c.Error == nil {
+		return nil
+	}
+
+	return c.Error
+}
+
 // ChatStreamChoice represents a single choice of a streaming chunk.
 type ChatStreamChoice struct {
 	Index        int              `json:"index"`
@@ -816,6 +825,25 @@ type ChatStreamError struct {
 	Message  string                   `json:"message"`
 	Code     int64                    `json:"code"`
 	Metadata *ChatStreamErrorMetadata `json:"metadata,omitempty"`
+}
+
+// Error returns the formatted string representation of the streaming chat error.
+func (e *ChatStreamError) Error() string {
+	var (
+		sb  strings.Builder
+		buf [20]byte
+	)
+
+	message := parseSubErrorMessage(e.Message)
+
+	sb.Grow(16 + 20 + 2 + len(message))
+
+	sb.WriteString("openrouter code ")
+	sb.Write(strconv.AppendInt(buf[:0], e.Code, 10))
+	sb.WriteString(": ")
+	sb.WriteString(message)
+
+	return sb.String()
 }
 
 // ChatStreamErrorMetadata represents the structured metadata of a streaming

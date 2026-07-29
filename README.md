@@ -1,0 +1,197 @@
+# openingrouter
+
+Go client for the [OpenRouter](https://openrouter.ai) API.
+
+## Install
+
+```bash
+go get github.com/coalaura/openingrouter
+```
+
+## Client
+
+```go
+client := openingrouter.NewClient(os.Getenv("OPENROUTER_API_KEY"),
+    openingrouter.WithTitle("my-app"),
+    openingrouter.WithReferer("https://example.com"),
+)
+```
+
+Options: `WithClient`, `WithBase`, `WithTitle`, `WithReferer`.
+
+## Chat
+
+```go
+resp, err := client.CreateChatCompletion(ctx, openingrouter.ChatCompletionRequest{
+    Model: "openai/gpt-oss-20b",
+    Messages: []openingrouter.ChatMessage{{
+        Role:    openingrouter.ChatRoleUser,
+        Content: openingrouter.ChatContent{Text: "Hello"},
+    }},
+})
+```
+
+Streaming responses:
+
+```go
+stream, err := client.CreateChatCompletionStream(ctx, openingrouter.ChatCompletionRequest{
+    Model: "openai/gpt-oss-20b",
+    Messages: []openingrouter.ChatMessage{{
+        Role:    openingrouter.ChatRoleUser,
+        Content: openingrouter.ChatContent{Text: "Hello"},
+    }},
+})
+
+if err != nil {
+    return err
+}
+
+defer stream.Close()
+
+for {
+    chunk, err := stream.Recv()
+    if errors.Is(err, io.EOF) {
+        break
+    }
+
+    if err != nil {
+        return err
+    }
+
+	// chunk.Choices[0].Delta.Content
+}
+```
+
+Optional fields use pointers (`new(true)`, `new(0.7)`). Zero values and nil pointers are omitted from the request body. Set `MetadataLevel` to receive routing metadata.
+
+## Embeddings
+
+```go
+resp, err := client.CreateEmbeddings(ctx, openingrouter.EmbeddingRequest{
+    Model: "openai/text-embedding-3-small",
+    Input: openingrouter.EmbeddingInput{Text: "Hello"},
+})
+```
+
+`Input` accepts a single text, a list of texts, token arrays or multimodal content.
+
+## Image generation
+
+```go
+resp, err := client.GenerateImage(ctx, openingrouter.ImageGenerationRequest{
+    Model:       "black-forest-labs/flux.2-klein-4b",
+    Prompt:      "a cat in a banana costume",
+    AspectRatio: openingrouter.ImageAspectRatio1x1,
+})
+
+// resp.Data[i].B64JSON, resp.Data[i].MediaType
+```
+
+Streaming via `GenerateImageStream`. List models with `ListImageModels`.
+
+## Speech
+
+Text-to-speech (caller owns and must close the body):
+
+```go
+resp, err := client.CreateSpeech(ctx, openingrouter.SpeechRequest{
+    Model:          "sesame/csm-1b",
+    Input:          "hello world",
+    Voice:          "...",
+    ResponseFormat: openingrouter.SpeechResponseFormatMP3,
+})
+
+defer resp.Body.Close()
+
+// resp.Body, resp.ContentType, resp.GenerationID
+```
+
+Speech-to-text:
+
+```go
+resp, err := client.CreateTranscription(ctx, openingrouter.STTRequest{
+    Model: "google/chirp-3",
+    InputAudio: openingrouter.STTInputAudio{
+        Data:   base64Audio,
+        Format: "wav",
+    },
+})
+
+// resp.Text
+```
+
+## Models
+
+```go
+models, err := client.ListModels(ctx, &openingrouter.ListModelsOptions{
+    Limit: new(10),
+})
+
+model, err := client.GetModelBySlug(ctx, "deepseek/deepseek-v4-flash")
+
+userModels, err := client.ListUserModels(ctx, nil)
+embeddingModels, err := client.ListEmbeddingModels(ctx, nil)
+```
+
+## API key
+
+```go
+info, err := client.GetCurrentApiKey(ctx)
+```
+
+## Frontend catalog
+
+Unauthenticated frontend route (not part of the public API, sometimes has more information):
+
+```go
+models, err := openingrouter.ListFrontendModels(ctx)
+```
+
+## Errors
+
+`Client.Do` maps non-2xx responses to:
+
+| Type | When |
+|------|------|
+| `*OpenRouterError` | API error with numeric code |
+| `*ApiError` | Named API / validation error |
+| `*ProviderError` | Upstream provider error |
+
+Network failures are returned as-is. Streaming endpoints may also surface mid-stream errors on the chunk/event itself.
+
+## Streams
+
+`OpenrouterStream[T]` is the common interface:
+
+```go
+type OpenrouterStream[T any] interface {
+    Recv() (T, error) // io.EOF when done
+    Close()
+}
+```
+
+Always `defer stream.Close()`.
+
+## Layout
+
+| File prefix | Endpoint |
+|-------------|----------|
+| `chat_` | `POST /chat/completions` |
+| `embeddings_` | `POST /embeddings` |
+| `embedding_models_` | `GET /embeddings/models` |
+| `image_` | `POST /images` |
+| `image_models_` | `GET /images/models` |
+| `models_` | `GET /models`, `/models/user`, `/model/{slug}` |
+| `stt_` | `POST /audio/transcriptions` |
+| `tts_` | `POST /audio/speech` |
+| `api_key_` | `GET /key` |
+| `frontend_` | frontend catalog |
+| `common_types.go` | shared request/response types |
+
+## Tests
+
+Integration tests hit the live API. Set `OPENROUTER_API_KEY` or they skip:
+
+```bash
+OPENROUTER_API_KEY="sk-or-v1-46...2f" go test ./...
+```

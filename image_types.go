@@ -1,5 +1,7 @@
 package openingrouter
 
+import "strings"
+
 // ImageGenerationRequest represents the request body of the image generation
 // endpoint. Model and Prompt are required, zero values and nil pointers of the
 // remaining fields are omitted from the request. Size is a shorthand for the
@@ -57,6 +59,14 @@ type ImageStreamEvent struct {
 	Error             *ImageStreamError    `json:"error,omitempty"`
 }
 
+func (e ImageStreamEvent) streamError() error {
+	if e.Error == nil {
+		return nil
+	}
+
+	return e.Error
+}
+
 // ImageStreamError represents the provider error details of a streaming
 // generation that failed after the response started.
 type ImageStreamError struct {
@@ -64,6 +74,33 @@ type ImageStreamError struct {
 	Code    *string `json:"code"`
 	Param   *string `json:"param"`
 	Type    *string `json:"type"`
+}
+
+// Error returns the formatted string representation of the streaming image error.
+func (e *ImageStreamError) Error() string {
+	message := parseSubErrorMessage(e.Message)
+
+	if e.Code != nil && *e.Code != "" {
+		var sb strings.Builder
+
+		sb.Grow(16 + len(*e.Code) + 2 + len(message))
+
+		sb.WriteString("openrouter code ")
+		sb.WriteString(*e.Code)
+		sb.WriteString(": ")
+		sb.WriteString(message)
+
+		return sb.String()
+	}
+
+	var sb strings.Builder
+
+	sb.Grow(12 + len(message))
+
+	sb.WriteString("openrouter: ")
+	sb.WriteString(message)
+
+	return sb.String()
 }
 
 // ImageAspectRatio is a normalized aspect ratio of a generated image. Providers

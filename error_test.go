@@ -36,29 +36,22 @@ func TestAsApiError(t *testing.T) {
 func TestAsProviderError(t *testing.T) {
 	client := tCreateClient(t)
 
-	data := map[string]any{
-		"model": "openai/gpt-5.6-luna",
-		"messages": []any{
-			map[string]any{
-				"role": "user",
-				"content": []any{
-					map[string]any{
-						"type": "text",
-						"text": "hi",
-					},
+	data := ChatCompletionRequest{
+		Model: "openai/gpt-5.6-luna",
+		Messages: []ChatMessage{
+			{
+				Role: ChatRoleUser,
+				Content: ChatContent{
+					Text: "hi",
 				},
 			},
 		},
-		"response_format": map[string]any{
-			"type": "json_object",
+		ResponseFormat: &ChatResponseFormat{
+			Type: ChatResponseFormatTypeJSONObject,
 		},
 	}
 
-	req, err := client.NewRequest(context.Background(), "POST", "chat/completions", data)
-
-	tAssertNil(t, err)
-
-	_, err = client.Do(req)
+	_, err := client.CreateChatCompletion(context.Background(), data)
 
 	tAssertNotNil(t, err)
 	tAssertEquals(t, err.Error(), "provider error: Response input messages must contain the word 'json' in some form to use 'text.format' of type 'json_object'.")

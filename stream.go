@@ -12,6 +12,10 @@ import (
 	"sync/atomic"
 )
 
+type streamErrorCarrier interface {
+	streamError() error
+}
+
 // OpenrouterStream represents a stream of typed elements.
 type OpenrouterStream[T any] interface {
 	Recv() (T, error)
@@ -38,14 +42,24 @@ func (s *ServerSentEventsStream[T]) Recv() (T, error) {
 	select {
 	case chunk, ok := <-s.stream:
 		if ok {
+			carrier, ok := any(chunk).(streamErrorCarrier)
+			if ok {
+				err := carrier.streamError()
+				if err != nil {
+					var zero T
+
+					return zero, err
+				}
+			}
+
 			return chunk, nil
 		}
 	case <-s.done:
 	}
 
-	var v T
+	var zero T
 
-	return v, io.EOF
+	return zero, io.EOF
 }
 
 // Close terminates the stream and cleans up resources.
