@@ -28,6 +28,46 @@ type ProviderPreferences struct {
 	AllowFallbacks *bool               `json:"allow_fallbacks,omitempty"`
 	Sort           *ProviderSortConfig `json:"sort,omitempty"`
 	Options        ProviderOptions     `json:"options,omitempty"`
+
+	DataCollection         ProviderDataCollection     `json:"data_collection,omitempty"`
+	EnforceDistillableText *bool                      `json:"enforce_distillable_text,omitempty"`
+	MaxPrice               *ProviderMaxPrice          `json:"max_price,omitempty"`
+	PreferredMaxLatency    *ProviderLatencyCutoffs    `json:"preferred_max_latency,omitempty"`
+	PreferredMinThroughput *ProviderThroughputCutoffs `json:"preferred_min_throughput,omitempty"`
+	Quantizations          []Quantization             `json:"quantizations,omitempty"`
+	RequireParameters      *bool                      `json:"require_parameters,omitempty"`
+	ZDR                    *bool                      `json:"zdr,omitempty"`
+}
+
+// ProviderMaxPrice represents the maximum price a request may cost. Token prices
+// are in USD per million tokens, the rest per unit.
+type ProviderMaxPrice struct {
+	Prompt     StringifiedNumber `json:"prompt,omitempty"`
+	Completion StringifiedNumber `json:"completion,omitempty"`
+	Image      StringifiedNumber `json:"image,omitempty"`
+	Audio      StringifiedNumber `json:"audio,omitempty"`
+	Request    StringifiedNumber `json:"request,omitempty"`
+}
+
+// ProviderLatencyCutoffs represents the preferred maximum latency of an endpoint
+// in seconds, per percentile. Endpoints above a cutoff may still be used, but are
+// deprioritized in routing. All given cutoffs must be met to be preferred.
+type ProviderLatencyCutoffs struct {
+	P50 *float64 `json:"p50,omitempty"`
+	P75 *float64 `json:"p75,omitempty"`
+	P90 *float64 `json:"p90,omitempty"`
+	P99 *float64 `json:"p99,omitempty"`
+}
+
+// ProviderThroughputCutoffs represents the preferred minimum throughput of an
+// endpoint in tokens per second, per percentile. Endpoints below a cutoff may
+// still be used, but are deprioritized in routing. All given cutoffs must be met
+// to be preferred.
+type ProviderThroughputCutoffs struct {
+	P50 *float64 `json:"p50,omitempty"`
+	P75 *float64 `json:"p75,omitempty"`
+	P90 *float64 `json:"p90,omitempty"`
+	P99 *float64 `json:"p99,omitempty"`
 }
 
 // ProviderSortConfig represents the sorting strategy used for a request when no
@@ -152,6 +192,33 @@ type ContentPartType string
 
 const (
 	ContentPartTypeImageURL ContentPartType = "image_url"
+)
+
+// ProviderDataCollection is the data collection policy an endpoint must satisfy.
+// If no provider meets the requirement, the request fails.
+type ProviderDataCollection string
+
+const (
+	ProviderDataCollectionAllow ProviderDataCollection = "allow"
+	ProviderDataCollectionDeny  ProviderDataCollection = "deny"
+)
+
+// Quantization is the quantization level of an endpoint.
+type Quantization string
+
+const (
+	QuantizationInt4    Quantization = "int4"
+	QuantizationInt8    Quantization = "int8"
+	QuantizationFP4     Quantization = "fp4"
+	QuantizationMXFP4   Quantization = "mxfp4"
+	QuantizationNVFP4   Quantization = "nvfp4"
+	QuantizationFP6     Quantization = "fp6"
+	QuantizationFP8     Quantization = "fp8"
+	QuantizationMXFP8   Quantization = "mxfp8"
+	QuantizationFP16    Quantization = "fp16"
+	QuantizationBF16    Quantization = "bf16"
+	QuantizationFP32    Quantization = "fp32"
+	QuantizationUnknown Quantization = "unknown"
 )
 
 // ProviderSort is the sorting strategy used to pick an endpoint.
