@@ -2,10 +2,11 @@ package openingrouter
 
 import (
 	"encoding/json"
-	"fmt"
+	"errors"
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
 )
 
 type errorResponse struct {
@@ -17,71 +18,125 @@ type errorData struct {
 	Message string `json:"message"`
 	Code    int64  `json:"code"`
 
-	Metadata *ProviderError `json:"metadata"`
+	// per-kind union decoded lazily by toError
+	Metadata json.RawMessage `json:"metadata"`
 }
 
-// OpenRouterError represents an error response returned by the OpenRouter API.
-type OpenRouterError struct {
-	Message string
-	Code    int64
-}
-
-// ApiError represents a general API error returned by OpenRouter.
-type ApiError struct {
-	Name    string
-	Message string
-}
-
-// ProviderError represents an error returned by an underlying model provider.
-type ProviderError struct {
+type errorMetadata struct {
+	// provider errors
 	Raw          string `json:"raw"`
 	ProviderName string `json:"provider_name"`
 	IsBYOK       bool   `json:"is_byok"`
+
+	// typed provider errors
+	ErrorType    ErrorType `json:"error_type"`
+	ProviderCode string    `json:"provider_code"`
+
+	// moderation errors
+	Reasons      []string `json:"reasons"`
+	FlaggedInput string   `json:"flagged_input"`
+	ModelSlug    string   `json:"model_slug"`
+
+	// credit and quota errors
+	LimitSource string `json:"limit_source"`
+	RemedyHint  string `json:"remedy_hint"`
+
+	PreviousErrors []SubError `json:"previous_errors"`
 }
 
-// Error returns the formatted string representation of the OpenRouter error.
-func (o *OpenRouterError) Error() string {
-	var (
-		sb  strings.Builder
-		buf [20]byte
-	)
+var (
+	ErrInvalidRequest      = errors.New("invalid request")
+	ErrUnauthorized        = errors.New("unauthorized")
+	ErrInsufficientCredits = errors.New("insufficient credits")
+	ErrForbidden           = errors.New("forbidden")
+	ErrNotFound            = errors.New("not found")
+	ErrContextLength       = errors.New("context length exceeded")
+	ErrModerated           = errors.New("moderated")
+	ErrRateLimited         = errors.New("rate limited")
+	ErrProviderUnavailable = errors.New("provider unavailable")
+	ErrTimeout             = errors.New("timeout")
+	ErrServer              = errors.New("server error")
+)
 
-	sb.Grow(16 + 20 + 2 + len(o.Message))
+func (e errorData) toError(status int, header http.Header) error {
+	var meta errorMetadata
 
-	sb.WriteString("openrouter code ")
-	sb.Write(strconv.AppendInt(buf[:0], o.Code, 10))
-	sb.WriteString(": ")
-	sb.WriteString(o.Message)
+	if len(e.Metadata) != 0 {
+		json.Unmarshal(e.Metadata, &meta)
+	}
 
-	return sb.String()
-}
+	code := e.Code
+	if code == 0 {
+		code = int64(status)
+	}
 
-// Error returns the formatted string representation of the API error.
-func (a *ApiError) Error() string {
-	var sb strings.Builder
+	es := ErrorStatus{
+		Code:         code,
+		Type:         meta.ErrorType,
+		ProviderCode: meta.ProviderCode,
+		RetryAfter:   retryAfter(header),
+		Previous:     meta.PreviousErrors,
+	}
 
-	sb.Grow(10 + len(a.Name) + 2 + len(a.Message))
+	for i := range es.Previous {
+		previous := &es.Previous[i]
 
-	sb.WriteString("api error ")
-	sb.WriteString(a.Name)
-	sb.WriteString(": ")
-	sb.WriteString(a.Message)
+		if previous.Raw != "" {
+			previous.Message = parseSubErrorMessage(previous.Raw)
 
-	return sb.String()
-}
+			continue
+		}
 
-// Error returns the formatted string representation of the provider error.
-func (p *ProviderError) Error() string {
-	var sb strings.Builder
+		previous.Message = parseSubErrorMessage(previous.Message)
+	}
 
-	message := parseSubErrorMessage(p.Raw)
+	message := parseSubErrorMessage(e.Message)
 
-	sb.Grow(17 + len(message))
+	switch {
+	case meta.Raw != "":
+		return &ProviderError{
+			ErrorStatus:  es,
+			Raw:          meta.Raw,
+			ProviderName: meta.ProviderName,
+			IsBYOK:       meta.IsBYOK,
+		}
+	case e.Name != "":
+		return &ApiError{
+			ErrorStatus: es,
+			Name:        e.Name,
+			Message:     message,
+		}
+	case len(meta.Reasons) != 0 || meta.FlaggedInput != "":
+		if es.Type == "" {
+			es.Type = ErrorTypeContentPolicy
+		}
 
-	sb.WriteString("provider error: ")
-	sb.WriteString(message)
+		return &ModerationError{
+			ErrorStatus:  es,
+			Message:      message,
+			Reasons:      meta.Reasons,
+			FlaggedInput: meta.FlaggedInput,
+			ProviderName: meta.ProviderName,
+			ModelSlug:    meta.ModelSlug,
+		}
+	case meta.LimitSource != "" || meta.RemedyHint != "" || code == http.StatusPaymentRequired:
+		if es.Type == "" {
+			es.Type = ErrorTypePaymentRequired
+		}
 
-	return sb.String()
+		return &CreditsError{
+			ErrorStatus: es,
+			Message:     message,
+			LimitSource: meta.LimitSource,
+			RemedyHint:  meta.RemedyHint,
+		}
+	}
+
+	return &OpenRouterError{
+		ErrorStatus: es,
+		Message:     message,
+		Metadata:    e.Metadata,
+	}
 }
 
 // AsOpenRouterError converts an HTTP response status or error into a structured OpenRouter error.
@@ -96,26 +151,45 @@ func AsOpenRouterError(resp *http.Response, err error) error {
 
 	err = json.NewDecoder(resp.Body).Decode(&meta)
 	if err != nil {
-		return fmt.Errorf("http: %s", resp.Status)
+		return newHttpError(resp)
 	}
 
 	info := meta.Error
 
-	if info.Metadata != nil {
-		return info.Metadata
+	if info.Message == "" && info.Name == "" && len(info.Metadata) == 0 {
+		return newHttpError(resp)
 	}
 
-	if info.Name != "" {
-		return &ApiError{
-			Name:    info.Name,
-			Message: parseSubErrorMessage(info.Message),
-		}
+	return info.toError(resp.StatusCode, resp.Header)
+}
+
+func newHttpError(resp *http.Response) error {
+	return &HttpError{
+		ErrorStatus: ErrorStatus{
+			Code:       int64(resp.StatusCode),
+			RetryAfter: retryAfter(resp.Header),
+		},
+		Status: resp.Status,
+	}
+}
+
+func retryAfter(header http.Header) time.Duration {
+	value := header.Get("Retry-After")
+	if value == "" {
+		return 0
 	}
 
-	return &OpenRouterError{
-		Message: parseSubErrorMessage(info.Message),
-		Code:    info.Code,
+	seconds, err := strconv.ParseInt(value, 10, 64)
+	if err == nil {
+		return max(time.Duration(seconds)*time.Second, 0)
 	}
+
+	date, err := http.ParseTime(value)
+	if err != nil {
+		return 0
+	}
+
+	return max(time.Until(date), 0)
 }
 
 func parseSubErrorMessage(raw string) string {

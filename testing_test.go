@@ -2,8 +2,11 @@ package openingrouter
 
 import (
 	"fmt"
+	"io"
+	"net/http"
 	"os"
 	"reflect"
+	"strconv"
 	"strings"
 	"testing"
 )
@@ -37,6 +40,19 @@ func tCreateClient(t testing.TB) *Client {
 	}
 
 	return NewClient(token)
+}
+
+func tResponse(status int, body string, header http.Header) *http.Response {
+	if header == nil {
+		header = http.Header{}
+	}
+
+	return &http.Response{
+		StatusCode: status,
+		Status:     strings.TrimSpace(strconv.Itoa(status) + " " + http.StatusText(status)),
+		Header:     header,
+		Body:       io.NopCloser(strings.NewReader(body)),
+	}
 }
 
 func tAssertLen[T iterable](t testing.TB, value T, length int) {
