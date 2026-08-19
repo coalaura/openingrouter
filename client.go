@@ -128,7 +128,7 @@ func WithClient(client *http.Client) Option {
 // Panics if the given base is not a valid url.
 func WithBase(base string) Option {
 	uri, err := url.Parse(base)
-	if err == nil {
+	if err != nil {
 		panic(fmt.Sprintf("illegal base url: %v", err))
 	}
 

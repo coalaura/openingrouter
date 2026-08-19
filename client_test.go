@@ -5,6 +5,20 @@ import (
 	"testing"
 )
 
+func TestNewClient(t *testing.T) {
+	client := NewClient(
+		"example-token",
+		WithTitle("OpeningRouter"),
+		WithReferer("https://example.com"),
+		WithBase("https://example.com/api/v1"),
+	)
+
+	tAssertNotNil(t, client)
+	tAssertEquals(t, client.title, "OpeningRouter")
+	tAssertEquals(t, client.referer, "https://example.com")
+	tAssertEquals(t, client.base.String(), "https://example.com/api/v1/")
+}
+
 func TestNewRequest(t *testing.T) {
 	client := tCreateClient(t)
 
