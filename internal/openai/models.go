@@ -29,5 +29,5 @@ type Model struct {
 // ModelsList is the root response of the list models endpoint.
 type ModelsList struct {
 	Object string  `json:"object"`
-	Models []Model `json:"models"`
+	Data   []Model `json:"data"`
 }
