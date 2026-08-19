@@ -11,7 +11,8 @@ go get github.com/coalaura/openingrouter
 ## Client
 
 ```go
-client := openingrouter.NewClient(os.Getenv("OPENROUTER_API_KEY"),
+client := openingrouter.NewClient(
+    os.Getenv("OPENROUTER_API_KEY"),
     openingrouter.WithTitle("my-app"),
     openingrouter.WithReferer("https://example.com"),
 )
