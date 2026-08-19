@@ -119,69 +119,6 @@ func (c *OpenAIClient) CreateChatCompletionStream(ctx context.Context, request C
 	return NewJsonResponseStream(chatCompletionChunks(openaiChatCompletionResponseToResponse(&fallback))...), nil
 }
 
-// CreateCompletion sends a legacy completions request and returns the response.
-func (c *OpenAIClient) CreateCompletion(ctx context.Context, request CompletionRequest) (*CompletionResponse, error) {
-	if request.Stream == nil || *request.Stream {
-		request.Stream = new(false)
-	}
-
-	req, err := c.NewRequest(ctx, "POST", "completions", completionRequestToOpenAI(&request))
-	if err != nil {
-		return nil, err
-	}
-
-	resp, err := c.Do(req)
-	if err != nil {
-		return nil, err
-	}
-
-	defer resp.Body.Close()
-
-	var result openai.CompletionResponse
-
-	err = json.NewDecoder(resp.Body).Decode(&result)
-	if err != nil {
-		return nil, err
-	}
-
-	return openaiCompletionResponseToResponse(&result), nil
-}
-
-// CreateCompletionStream sends a streaming completions request and returns a
-// stream of completion chunks.
-func (c *OpenAIClient) CreateCompletionStream(ctx context.Context, request CompletionRequest) (OpenrouterStream[CompletionStreamChunk], error) {
-	if request.Stream == nil {
-		request.Stream = new(true)
-	}
-
-	req, err := c.NewRequest(ctx, "POST", "completions", completionRequestToOpenAI(&request))
-	if err != nil {
-		return nil, err
-	}
-
-	resp, err := c.Do(req)
-	if err != nil {
-		return nil, err
-	}
-
-	if IsResponseServerSentEventsStream(resp) {
-		return &openAICompletionStream{
-			inner: NewServerSentEventsStream[openai.CompletionChunk](ctx, resp),
-		}, nil
-	}
-
-	defer resp.Body.Close()
-
-	var fallback openai.CompletionResponse
-
-	err = json.NewDecoder(resp.Body).Decode(&fallback)
-	if err != nil {
-		return nil, err
-	}
-
-	return NewJsonResponseStream(completionChunks(openaiCompletionResponseToResponse(&fallback))...), nil
-}
-
 // CreateEmbeddings submits an embedding request and returns the response.
 func (c *OpenAIClient) CreateEmbeddings(ctx context.Context, request EmbeddingRequest) (*EmbeddingResponse, error) {
 	req, err := c.NewRequest(ctx, "POST", "embeddings", embeddingRequestToOpenAI(&request))

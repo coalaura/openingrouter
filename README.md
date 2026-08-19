@@ -37,7 +37,7 @@ resp, err := oa.CreateChatCompletion(ctx, openingrouter.ChatCompletionRequest{..
 models, err := oa.ListModels(ctx)
 ```
 
-Supported: `ListModels`, `GetModel`, `CreateChatCompletion`/`Stream`, `CreateCompletion`/`Stream`, `CreateEmbeddings`. Non-2xx responses map to `*OpenAIError`.
+Supported: `ListModels`, `GetModel`, `CreateChatCompletion`/`Stream`, `CreateEmbeddings`. Non-2xx responses map to `*OpenAIError`.
 
 ## Chat
 
