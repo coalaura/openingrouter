@@ -36,9 +36,9 @@ func openaiModelsListToModels(list *openai.ModelsList) []Model {
 		return nil
 	}
 
-	result := make([]Model, 0, len(list.Data))
-	for i := range list.Data {
-		result = append(result, *openaiModelToModel(&list.Data[i]))
+	result := make([]Model, 0, len(list.Models))
+	for i := range list.Models {
+		result = append(result, *openaiModelToModel(&list.Models[i]))
 	}
 
 	return result
