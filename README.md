@@ -20,6 +20,25 @@ client := openingrouter.NewClient(
 
 Options: `WithClient`, `WithBase`, `WithTitle`, `WithReferer`.
 
+## OpenAI-compatible endpoints
+
+Point the same request/response types at any OpenAI-compatible API (OpenAI, Groq, Together, a local server, ...):
+
+```go
+oa := client.ToOpenAI() // reuses the token + HTTP client
+
+// or standalone; defaults to https://api.openai.com/v1/
+oa := openingrouter.NewOpenAIClient(
+    os.Getenv("OPENAI_API_KEY"),
+    openingrouter.WithOpenAIBase("https://api.groq.com/openai/v1"),
+)
+
+resp, err := oa.CreateChatCompletion(ctx, openingrouter.ChatCompletionRequest{...})
+models, err := oa.ListModels(ctx)
+```
+
+Supported: `ListModels`, `GetModel`, `CreateChatCompletion`/`Stream`, `CreateCompletion`/`Stream`, `CreateEmbeddings`. Non-2xx responses map to `*OpenAIError`.
+
 ## Chat
 
 ```go

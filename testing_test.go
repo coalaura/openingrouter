@@ -18,7 +18,8 @@ const (
 type iterable interface {
 	~string | ~[]byte | ~[]float64 |
 		~[]FrontendModel | ~[]Model | ~[]ImageModel |
-		~[]GeneratedImage | ~[]ChatChoice | ~[]Embedding
+		~[]GeneratedImage | ~[]ChatChoice | ~[]Embedding |
+		~[]CompletionChoice
 }
 
 var testUsage float64
