@@ -19,15 +19,15 @@ const (
 
 // Model represents a single model offering of an OpenAI compatible endpoint.
 type Model struct {
-	ID           string   `json:"id"`
-	Created      int64    `json:"created"`
-	Object       string   `json:"object"`
-	OwnedBy      string   `json:"owned_by"`
-	ShutdownDate *string  `json:"shutdown_date,omitempty"`
+	ID           string  `json:"id"`
+	Created      int64   `json:"created"`
+	Object       string  `json:"object"`
+	OwnedBy      string  `json:"owned_by"`
+	ShutdownDate *string `json:"shutdown_date,omitempty"`
 }
 
 // ModelsList is the root response of the list models endpoint.
 type ModelsList struct {
 	Object string  `json:"object"`
-	Data   []Model `json:"data"`
+	Models []Model `json:"models"`
 }
