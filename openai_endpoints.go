@@ -9,9 +9,7 @@ import (
 )
 
 // ListModels retrieves the list of models available on the OpenAI compatible API.
-// Unlike the OpenRouter endpoint, the OpenAI list endpoint takes no query
-// parameters, so no options are accepted.
-func (c *OpenAIClient) ListModels(ctx context.Context) ([]Model, error) {
+func (c *OpenAIClient) ListModels(ctx context.Context, _ *ListModelsOptions) ([]Model, error) {
 	req, err := c.NewRequest(ctx, "GET", "models", nil)
 	if err != nil {
 		return nil, err

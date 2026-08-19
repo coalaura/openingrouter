@@ -47,7 +47,8 @@ func tDecodeBody(t testing.TB, r *http.Request) map[string]any {
 
 	var body map[string]any
 
-	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+	err := json.NewDecoder(r.Body).Decode(&body)
+	if err != nil {
 		t.Fatalf("decode request body: %v", err)
 	}
 
@@ -70,7 +71,7 @@ func TestOpenAIListModels(t *testing.T) {
 		}`))
 	})
 
-	models, err := client.ListModels(context.Background())
+	models, err := client.ListModels(context.Background(), nil)
 
 	tAssertNil(t, err)
 	tAssertLen(t, models, 2)
