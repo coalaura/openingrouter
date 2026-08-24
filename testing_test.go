@@ -17,7 +17,7 @@ const (
 
 type iterable interface {
 	~string | ~[]byte | ~[]float64 |
-		~[]FrontendModel | ~[]Model | ~[]ImageModel |
+		~[]FrontendModel | ~[]FrontendProvider | ~[]Model | ~[]ImageModel |
 		~[]GeneratedImage | ~[]ChatChoice | ~[]Embedding |
 		~[]CompletionChoice
 }
