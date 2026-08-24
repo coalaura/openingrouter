@@ -30,6 +30,31 @@ func (c *Client) GetModelBySlug(ctx context.Context, slug string) (*Model, error
 	return &result.Data, nil
 }
 
+// GetModelEndpoints retrieves detailed information about a model by its slug,
+// including the provider endpoints serving it.
+func (c *Client) GetModelEndpoints(ctx context.Context, slug string) (*ModelEndpoints, error) {
+	req, err := c.NewRequest(ctx, "GET", fmt.Sprintf("models/%s/endpoints", slug), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := c.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	defer resp.Body.Close()
+
+	var result OpenRouterResponse[ModelEndpoints]
+
+	err = json.NewDecoder(resp.Body).Decode(&result)
+	if err != nil {
+		return nil, err
+	}
+
+	return &result.Data, nil
+}
+
 // ListModels retrieves the list of available models filtered by options.
 func (c *Client) ListModels(ctx context.Context, options *ListModelsOptions) ([]Model, error) {
 	req, err := c.NewRequest(ctx, "GET", "models", options)

@@ -23,6 +23,58 @@ type Model struct {
 	Links               ModelLinks              `json:"links"`
 }
 
+// ModelEndpoints represents a model together with the provider endpoints
+// serving it.
+type ModelEndpoints struct {
+	ID           string            `json:"id"`
+	Name         string            `json:"name"`
+	Created      int64             `json:"created"`
+	Description  string            `json:"description"`
+	Architecture ModelArchitecture `json:"architecture"`
+	Endpoints    []ModelEndpoint   `json:"endpoints"`
+}
+
+// ModelEndpoint represents a single provider endpoint serving a model.
+type ModelEndpoint struct {
+	Name                    string                   `json:"name"`
+	ModelID                 string                   `json:"model_id"`
+	ModelName               string                   `json:"model_name"`
+	ContextLength           int                      `json:"context_length"`
+	Pricing                 ModelPricing             `json:"pricing"`
+	ProviderName            string                   `json:"provider_name"`
+	Tag                     string                   `json:"tag"`
+	Quantization            Quantization             `json:"quantization"`
+	MaxCompletionTokens     *int                     `json:"max_completion_tokens"`
+	MaxPromptTokens         *int                     `json:"max_prompt_tokens"`
+	SupportedParameters     []Parameter              `json:"supported_parameters"`
+	Status                  int                      `json:"status"`
+	UptimeLast30m           *float64                 `json:"uptime_last_30m"`
+	UptimeLast5m            *float64                 `json:"uptime_last_5m"`
+	UptimeLast1d            *float64                 `json:"uptime_last_1d"`
+	SupportsImplicitCaching bool                     `json:"supports_implicit_caching"`
+	SupportsVoiceCloning    bool                     `json:"supports_voice_cloning"`
+	LatencyLast30m          *EndpointLatencyStats    `json:"latency_last_30m"`
+	ThroughputLast30m       *EndpointThroughputStats `json:"throughput_last_30m"`
+}
+
+// EndpointLatencyStats represents the latency percentiles of an endpoint over
+// the last 30 minutes, in milliseconds.
+type EndpointLatencyStats struct {
+	P50 float64 `json:"p50"`
+	P75 float64 `json:"p75"`
+	P90 float64 `json:"p90"`
+	P99 float64 `json:"p99"`
+}
+
+// EndpointThroughputStats represents the throughput percentiles of an endpoint
+// over the last 30 minutes, in tokens per second.
+type EndpointThroughputStats struct {
+	P50 float64 `json:"p50"`
+	P75 float64 `json:"p75"`
+	P90 float64 `json:"p90"`
+	P99 float64 `json:"p99"`
+}
+
 // ModelArchitecture represents the architecture information of a model.
 type ModelArchitecture struct {
 	Modality         *string          `json:"modality"`

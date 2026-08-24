@@ -149,6 +149,10 @@ models, err := client.ListModels(ctx, &openingrouter.ListModelsOptions{
 
 model, err := client.GetModelBySlug(ctx, "deepseek/deepseek-v4-flash")
 
+endpoints, err := client.GetModelEndpoints(ctx, "deepseek/deepseek-v4-flash")
+
+// endpoints.Endpoints[i].Pricing, .ProviderName, .LatencyLast30m
+
 userModels, err := client.ListUserModels(ctx, nil)
 embeddingModels, err := client.ListEmbeddingModels(ctx, nil)
 ```
@@ -226,7 +230,7 @@ Always `defer stream.Close()`. Chunk types that carry an in-band error implement
 | `embedding_models_` | `GET /embeddings/models` |
 | `image_` | `POST /images` |
 | `image_models_` | `GET /images/models` |
-| `models_` | `GET /models`, `/models/user`, `/model/{slug}` |
+| `models_` | `GET /models`, `/models/user`, `/model/{slug}`, `/models/{slug}/endpoints` |
 | `stt_` | `POST /audio/transcriptions` |
 | `tts_` | `POST /audio/speech` |
 | `api_key_` | `GET /key` |
