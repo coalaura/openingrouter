@@ -169,6 +169,8 @@ Unauthenticated frontend route (not part of the public API, sometimes has more i
 
 ```go
 models, err := openingrouter.ListFrontendModels(ctx)
+
+providers, err := openingrouter.ListFrontendProviders(ctx)
 ```
 
 ## Errors
