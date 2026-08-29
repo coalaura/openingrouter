@@ -8,6 +8,16 @@ import (
 	"time"
 )
 
+type openRouterErrorCase struct {
+	name    string
+	status  int
+	header  http.Header
+	body    string
+	want    string
+	wantIs  error
+	inspect func(t *testing.T, err error)
+}
+
 func TestAsHttpError(t *testing.T) {
 	client := NewClient("none")
 
@@ -15,6 +25,7 @@ func TestAsHttpError(t *testing.T) {
 
 	tAssertNil(t, err)
 
+	//lint:ignore bodyclose response body is always nil
 	_, err = client.Do(req)
 
 	tAssertNotNil(t, err)
@@ -22,6 +33,7 @@ func TestAsHttpError(t *testing.T) {
 }
 
 func TestAsProviderError(t *testing.T) {
+	//lint:ignore bodyclose response body is nop closer
 	err := AsOpenRouterError(tResponse(http.StatusBadRequest, `{
 	"error": {
 		"message": "Provider returned error",
@@ -70,6 +82,7 @@ func TestAsProviderError(t *testing.T) {
 }
 
 func TestAsCreditsError(t *testing.T) {
+	//lint:ignore bodyclose response body is nop closer
 	err := AsOpenRouterError(tResponse(http.StatusPaymentRequired, `{
 	"error": {
 		"message": "This request requires more credits, or fewer max_tokens. You requested up to 928596 tokens, but can only afford 377866. To increase, visit https://openrouter.ai/settings/credits and add more credits",
@@ -120,15 +133,7 @@ func TestAsCreditsError(t *testing.T) {
 }
 
 func TestAsOpenRouterErrorShapes(t *testing.T) {
-	tests := []struct {
-		name    string
-		status  int
-		header  http.Header
-		body    string
-		want    string
-		wantIs  error
-		inspect func(t *testing.T, err error)
-	}{
+	tests := []openRouterErrorCase{
 		{
 			name:   "typed provider error with retry-after",
 			status: http.StatusTooManyRequests,
@@ -212,6 +217,7 @@ func TestAsOpenRouterErrorShapes(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
+			//lint:ignore bodyclose response body is nop closer
 			err := AsOpenRouterError(tResponse(test.status, test.body, test.header), nil)
 
 			tAssertNotNil(t, err)

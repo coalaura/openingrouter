@@ -170,16 +170,19 @@ func TestOpenAICreateChatCompletionStream(t *testing.T) {
 		flusher, _ := w.(http.Flusher)
 
 		w.Write([]byte(`data: {"id":"chatcmpl-1","object":"chat.completion.chunk","created":1,"model":"gpt-4o","choices":[{"index":0,"delta":{"role":"assistant","content":"hello"}}]}` + "\n\n"))
+
 		if flusher != nil {
 			flusher.Flush()
 		}
 
 		w.Write([]byte(`data: {"id":"chatcmpl-1","object":"chat.completion.chunk","created":1,"model":"gpt-4o","choices":[{"index":0,"delta":{"content":" world"},"finish_reason":"stop"}]}` + "\n\n"))
+
 		if flusher != nil {
 			flusher.Flush()
 		}
 
 		w.Write([]byte("data: [DONE]" + "\n\n"))
+
 		if flusher != nil {
 			flusher.Flush()
 		}
@@ -193,6 +196,7 @@ func TestOpenAICreateChatCompletionStream(t *testing.T) {
 	})
 
 	tAssertNil(t, err)
+
 	defer stream.Close()
 
 	var (
@@ -274,6 +278,7 @@ func TestOpenAIError(t *testing.T) {
 	tAssertNotNil(t, err)
 
 	var openAIErr *OpenAIError
+
 	if !errors.As(err, &openAIErr) {
 		t.Fatalf("expected *OpenAIError, got %T: %v", err, err)
 	}

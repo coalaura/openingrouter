@@ -21,6 +21,8 @@ func (c *Client) GenerateImage(ctx context.Context, request ImageGenerationReque
 		return nil, err
 	}
 
+	defer resp.Body.Close()
+
 	var result ImageGenerationResponse
 
 	err = json.NewDecoder(resp.Body).Decode(&result)
@@ -46,6 +48,8 @@ func (c *Client) GenerateImageStream(ctx context.Context, request ImageGeneratio
 	if err != nil {
 		return nil, err
 	}
+
+	defer resp.Body.Close()
 
 	if IsResponseServerSentEventsStream(resp) {
 		return NewServerSentEventsStream[ImageStreamEvent](ctx, resp), nil

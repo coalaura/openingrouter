@@ -117,6 +117,7 @@ func NewServerSentEventsStream[T any](ctx context.Context, resp *http.Response) 
 		defer sse.Close()
 
 		reader := bufio.NewReader(resp.Body)
+
 		for {
 			select {
 			case <-done:

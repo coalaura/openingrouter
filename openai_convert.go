@@ -22,7 +22,8 @@ func openaiModelToModel(m *openai.Model) *Model {
 	}
 
 	if m.ShutdownDate != nil {
-		if ft, ok := parseFlexibleTime(*m.ShutdownDate); ok {
+		ft, ok := parseFlexibleTime(*m.ShutdownDate)
+		if ok {
 			result.ExpirationDate = &ft
 		}
 	}
@@ -37,6 +38,7 @@ func openaiModelsListToModels(list *openai.ModelsList) []Model {
 	}
 
 	result := make([]Model, 0, len(list.Data))
+
 	for i := range list.Data {
 		result = append(result, *openaiModelToModel(&list.Data[i]))
 	}
@@ -47,7 +49,8 @@ func openaiModelsListToModels(list *openai.ModelsList) []Model {
 // parseFlexibleTime parses a timestamp in any of the supported formats.
 func parseFlexibleTime(value string) (FlexibleTime, bool) {
 	for _, format := range timeFormats {
-		if t, err := time.Parse(format, value); err == nil {
+		t, err := time.Parse(format, value)
+		if err == nil {
 			return FlexibleTime{Time: t}, true
 		}
 	}
@@ -244,6 +247,7 @@ func chatMessagesToOpenAI(messages []ChatMessage) []openai.ChatMessage {
 	}
 
 	result := make([]openai.ChatMessage, 0, len(messages))
+
 	for i := range messages {
 		result = append(result, chatMessageToOpenAI(&messages[i]))
 	}
@@ -368,6 +372,7 @@ func chatToolCallsToOpenAI(calls []ChatToolCall) []openai.ChatToolCall {
 	}
 
 	result := make([]openai.ChatToolCall, 0, len(calls))
+
 	for i := range calls {
 		result = append(result, openai.ChatToolCall{
 			ID:   calls[i].ID,
@@ -380,45 +385,6 @@ func chatToolCallsToOpenAI(calls []ChatToolCall) []openai.ChatToolCall {
 	}
 
 	return result
-}
-
-// completionRequestToOpenAI converts a completions request into the OpenAI wire
-// format. The two shapes are intentionally identical, so this is a field copy.
-func completionRequestToOpenAI(req *CompletionRequest) *openai.CompletionRequest {
-	if req == nil {
-		return nil
-	}
-
-	return &openai.CompletionRequest{
-		Model:            req.Model,
-		Prompt:           completionInputToOpenAI(req.Prompt),
-		BestOf:           req.BestOf,
-		Echo:             req.Echo,
-		FrequencyPenalty: req.FrequencyPenalty,
-		LogitBias:        req.LogitBias,
-		Logprobs:         req.Logprobs,
-		MaxTokens:        req.MaxTokens,
-		N:                req.N,
-		PresencePenalty:  req.PresencePenalty,
-		Seed:             req.Seed,
-		Stop:             req.Stop,
-		Stream:           req.Stream,
-		StreamOptions:    streamOptionsToOpenAI(req.StreamOptions),
-		Suffix:           req.Suffix,
-		Temperature:      req.Temperature,
-		TopP:             req.TopP,
-		User:             req.User,
-	}
-}
-
-// completionInputToOpenAI converts the prompt input.
-func completionInputToOpenAI(input CompletionInput) openai.CompletionInput {
-	return openai.CompletionInput{
-		Text:        input.Text,
-		Texts:       input.Texts,
-		Tokens:      input.Tokens,
-		TokenArrays: input.TokenArrays,
-	}
 }
 
 // embeddingRequestToOpenAI converts an embeddings request. Multimodal inputs have
@@ -484,6 +450,7 @@ func openaiChatChoicesToChatChoices(choices []openai.ChatChoice) []ChatChoice {
 	}
 
 	result := make([]ChatChoice, 0, len(choices))
+
 	for i := range choices {
 		result = append(result, ChatChoice{
 			Index:        choices[i].Index,
@@ -536,6 +503,7 @@ func openaiChatToolCallsToChatToolCalls(calls []openai.ChatToolCall) []ChatToolC
 	}
 
 	result := make([]ChatToolCall, 0, len(calls))
+
 	for i := range calls {
 		result = append(result, ChatToolCall{
 			ID:   calls[i].ID,
@@ -569,6 +537,7 @@ func openaiChatTokenLogprobsToChatTokenLogprobs(tokens []openai.ChatTokenLogprob
 	}
 
 	result := make([]ChatTokenLogprob, 0, len(tokens))
+
 	for i := range tokens {
 		result = append(result, ChatTokenLogprob{
 			Token:       tokens[i].Token,
@@ -588,6 +557,7 @@ func openaiChatTopLogprobsToChatTopLogprobs(tokens []openai.ChatTopLogprob) []Ch
 	}
 
 	result := make([]ChatTopLogprob, 0, len(tokens))
+
 	for i := range tokens {
 		result = append(result, ChatTopLogprob{
 			Token:   tokens[i].Token,
@@ -662,6 +632,7 @@ func openaiChatChunkChoicesToChatStreamChoices(choices []openai.ChatChunkChoice)
 	}
 
 	result := make([]ChatStreamChoice, 0, len(choices))
+
 	for i := range choices {
 		choice := ChatStreamChoice{
 			Index:    choices[i].Index,
@@ -715,6 +686,7 @@ func openaiChatStreamToolCallsToChatStreamToolCalls(calls []openai.ChatStreamToo
 	}
 
 	result := make([]ChatStreamToolCall, 0, len(calls))
+
 	for i := range calls {
 		call := ChatStreamToolCall{
 			Index: calls[i].Index,
@@ -730,103 +702,6 @@ func openaiChatStreamToolCallsToChatStreamToolCalls(calls []openai.ChatStreamToo
 		}
 
 		result = append(result, call)
-	}
-
-	return result
-}
-
-// openaiCompletionResponseToResponse converts an OpenAI completions response into
-// the openingrouter type.
-func openaiCompletionResponseToResponse(r *openai.CompletionResponse) *CompletionResponse {
-	if r == nil {
-		return nil
-	}
-
-	return &CompletionResponse{
-		ID:                r.ID,
-		Object:            CompletionObject(r.Object),
-		Created:           r.Created,
-		Model:             r.Model,
-		Choices:           openaiCompletionChoicesToCompletionChoices(r.Choices),
-		SystemFingerprint: r.SystemFingerprint,
-		Usage:             openaiCompletionUsageToCompletionUsage(r.Usage),
-	}
-}
-
-// openaiCompletionChoicesToCompletionChoices converts the response choices.
-func openaiCompletionChoicesToCompletionChoices(choices []openai.CompletionChoice) []CompletionChoice {
-	if len(choices) == 0 {
-		return nil
-	}
-
-	result := make([]CompletionChoice, 0, len(choices))
-	for i := range choices {
-		result = append(result, CompletionChoice{
-			Index:        choices[i].Index,
-			FinishReason: choices[i].FinishReason,
-			Text:         choices[i].Text,
-			Logprobs:     openaiCompletionLogprobsToCompletionLogprobs(choices[i].Logprobs),
-		})
-	}
-
-	return result
-}
-
-// openaiCompletionLogprobsToCompletionLogprobs converts the log probabilities.
-func openaiCompletionLogprobsToCompletionLogprobs(lp *openai.CompletionLogprobs) *CompletionLogprobs {
-	if lp == nil {
-		return nil
-	}
-
-	return &CompletionLogprobs{
-		TextOffset:    lp.TextOffset,
-		TokenLogprobs: lp.TokenLogprobs,
-		Tokens:        lp.Tokens,
-		TopLogprobs:   lp.TopLogprobs,
-	}
-}
-
-// openaiCompletionUsageToCompletionUsage converts the token usage.
-func openaiCompletionUsageToCompletionUsage(u *openai.CompletionUsage) *CompletionUsage {
-	if u == nil {
-		return nil
-	}
-
-	return &CompletionUsage{
-		PromptTokens:     u.PromptTokens,
-		CompletionTokens: u.CompletionTokens,
-		TotalTokens:      u.TotalTokens,
-	}
-}
-
-// openaiCompletionChunkToChunk converts a single streamed completions chunk.
-func openaiCompletionChunkToChunk(c *openai.CompletionChunk) CompletionStreamChunk {
-	return CompletionStreamChunk{
-		ID:                c.ID,
-		Object:            CompletionObject(c.Object),
-		Created:           c.Created,
-		Model:             c.Model,
-		Choices:           openaiCompletionChunkChoicesToCompletionStreamChoices(c.Choices),
-		SystemFingerprint: c.SystemFingerprint,
-		Usage:             openaiCompletionUsageToCompletionUsage(c.Usage),
-	}
-}
-
-// openaiCompletionChunkChoicesToCompletionStreamChoices converts the streamed
-// choices.
-func openaiCompletionChunkChoicesToCompletionStreamChoices(choices []openai.CompletionChunkChoice) []CompletionStreamChoice {
-	if len(choices) == 0 {
-		return nil
-	}
-
-	result := make([]CompletionStreamChoice, 0, len(choices))
-	for i := range choices {
-		result = append(result, CompletionStreamChoice{
-			Index:        choices[i].Index,
-			Text:         choices[i].Text,
-			FinishReason: choices[i].FinishReason,
-			Logprobs:     openaiCompletionLogprobsToCompletionLogprobs(choices[i].Logprobs),
-		})
 	}
 
 	return result
@@ -855,6 +730,7 @@ func openaiEmbeddingsToEmbeddings(embeddings []openai.Embedding) []Embedding {
 	}
 
 	result := make([]Embedding, 0, len(embeddings))
+
 	for i := range embeddings {
 		result = append(result, Embedding{
 			Object: EmbeddingObject(embeddings[i].Object),

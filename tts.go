@@ -12,6 +12,7 @@ func (c *Client) CreateSpeech(ctx context.Context, request SpeechRequest) (*Spee
 		return nil, err
 	}
 
+	//lint:ignore bodyclose closing response body is responsibility of caller
 	resp, err := c.Do(req)
 	if err != nil {
 		return nil, err

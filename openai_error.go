@@ -81,7 +81,8 @@ func AsOpenAIError(resp *http.Response, err error) error {
 	if raw != "" && raw != "null" {
 		trimmed := strings.Trim(raw, `"`)
 
-		if parsed, perr := strconv.ParseInt(trimmed, 10, 64); perr == nil {
+		parsed, perr := strconv.ParseInt(trimmed, 10, 64)
+		if perr == nil {
 			code = parsed
 		} else {
 			code = int64(resp.StatusCode)

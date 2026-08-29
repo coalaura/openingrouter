@@ -34,7 +34,7 @@ const (
 // Messages is required, Model may be omitted when the server decides the route.
 // Zero values and nil pointers of the remaining fields are omitted.
 type ChatCompletionRequest struct {
-	Model    string      `json:"model,omitempty"`
+	Model    string        `json:"model,omitempty"`
 	Messages []ChatMessage `json:"messages"`
 
 	FrequencyPenalty    *float64                `json:"frequency_penalty,omitempty"`
@@ -69,14 +69,14 @@ type ChatCompletionRequest struct {
 // which of the remaining fields are meaningful. Content is a string or a list
 // of content parts.
 type ChatMessage struct {
-	Role    ChatRole    `json:"role"`
+	Role    ChatRole     `json:"role"`
 	Content *ChatContent `json:"content,omitempty"`
-	Name    string      `json:"name,omitempty"`
+	Name    string       `json:"name,omitempty"`
 
-	Refusal    string       `json:"refusal,omitempty"`
-	Audio      *ChatAudio   `json:"audio,omitempty"`
+	Refusal    string         `json:"refusal,omitempty"`
+	Audio      *ChatAudio     `json:"audio,omitempty"`
 	ToolCalls  []ChatToolCall `json:"tool_calls,omitempty"`
-	ToolCallID string       `json:"tool_call_id,omitempty"`
+	ToolCallID string         `json:"tool_call_id,omitempty"`
 }
 
 // ChatContent represents the content of a message, encoded either as a plain
@@ -99,11 +99,11 @@ func (cc ChatContent) MarshalJSON() ([]byte, error) {
 // ChatContentPart represents a single content part of a message. Type
 // determines which of the remaining fields are used.
 type ChatContentPart struct {
-	Type       ChatContentPartType  `json:"type"`
-	Text       string               `json:"text,omitempty"`
-	ImageURL   *ChatContentImageURL `json:"image_url,omitempty"`
+	Type       ChatContentPartType    `json:"type"`
+	Text       string                 `json:"text,omitempty"`
+	ImageURL   *ChatContentImageURL   `json:"image_url,omitempty"`
 	InputAudio *ChatContentInputAudio `json:"input_audio,omitempty"`
-	File       *ChatContentFile     `json:"file,omitempty"`
+	File       *ChatContentFile       `json:"file,omitempty"`
 }
 
 // ChatContentImageURL holds the url of an image content part, as a base64 data
@@ -163,10 +163,12 @@ type ChatFunction struct {
 // encodes the plain "none", "auto" and "required" choices and takes precedence,
 // otherwise Function names the tool to force.
 type ChatToolChoice struct {
-	Mode     string                `json:"-"`
-	Type     string                `json:"type,omitempty"`
-	Function *ChatToolChoiceFunc   `json:"function,omitempty"`
+	Mode     string              `json:"-"`
+	Type     string              `json:"type,omitempty"`
+	Function *ChatToolChoiceFunc `json:"function,omitempty"`
 }
+
+type choiceAlias ChatToolChoice
 
 // MarshalJSON implements the json.Marshaler interface for ChatToolChoice.
 func (tc ChatToolChoice) MarshalJSON() ([]byte, error) {
@@ -174,9 +176,7 @@ func (tc ChatToolChoice) MarshalJSON() ([]byte, error) {
 		return jsonMarshal(tc.Mode)
 	}
 
-	type choice ChatToolChoice
-
-	return jsonMarshal(choice(tc))
+	return jsonMarshal(choiceAlias(tc))
 }
 
 // ChatToolChoiceFunc holds the name of the function a named tool choice forces.
@@ -187,7 +187,7 @@ type ChatToolChoiceFunc struct {
 // ChatResponseFormat represents the response format configuration of a request.
 // Type determines which of the remaining fields are used.
 type ChatResponseFormat struct {
-	Type       string         `json:"type"`
+	Type       string          `json:"type"`
 	JSONSchema *ChatJSONSchema `json:"json_schema,omitempty"`
 }
 
@@ -202,8 +202,8 @@ type ChatJSONSchema struct {
 
 // ChatPrediction represents static predicted output content.
 type ChatPrediction struct {
-	Type    string       `json:"type"`
-	Content ChatContent  `json:"content"`
+	Type    string      `json:"type"`
+	Content ChatContent `json:"content"`
 }
 
 // ChatPromptCacheOptions represents the request level prompt cache controls.
@@ -219,30 +219,30 @@ type ChatStreamOptions struct {
 
 // ChatCompletionResponse is the root response of the chat completions endpoint.
 type ChatCompletionResponse struct {
-	ID                string         `json:"id"`
-	Object            ChatObject     `json:"object"`
-	Created           int64          `json:"created"`
-	Model             string         `json:"model"`
-	Choices           []ChatChoice   `json:"choices"`
-	SystemFingerprint *string        `json:"system_fingerprint"`
-	ServiceTier       string         `json:"service_tier,omitempty"`
-	Usage             *ChatUsage     `json:"usage,omitempty"`
+	ID                string       `json:"id"`
+	Object            ChatObject   `json:"object"`
+	Created           int64        `json:"created"`
+	Model             string       `json:"model"`
+	Choices           []ChatChoice `json:"choices"`
+	SystemFingerprint *string      `json:"system_fingerprint"`
+	ServiceTier       string       `json:"service_tier,omitempty"`
+	Usage             *ChatUsage   `json:"usage,omitempty"`
 }
 
 // ChatChoice represents a single completion choice.
 type ChatChoice struct {
-	Index        int           `json:"index"`
-	FinishReason string        `json:"finish_reason"`
+	Index        int            `json:"index"`
+	FinishReason string         `json:"finish_reason"`
 	Message      ChatOutMessage `json:"message"`
-	Logprobs     *ChatLogprobs `json:"logprobs,omitempty"`
+	Logprobs     *ChatLogprobs  `json:"logprobs,omitempty"`
 }
 
 // ChatOutMessage represents the assistant message of a completion choice.
 type ChatOutMessage struct {
-	Role      string        `json:"role"`
-	Content   *string       `json:"content"`
-	Refusal   string        `json:"refusal,omitempty"`
-	Audio     *ChatOutAudio `json:"audio,omitempty"`
+	Role      string         `json:"role"`
+	Content   *string        `json:"content"`
+	Refusal   string         `json:"refusal,omitempty"`
+	Audio     *ChatOutAudio  `json:"audio,omitempty"`
 	ToolCalls []ChatToolCall `json:"tool_calls,omitempty"`
 }
 
@@ -277,10 +277,10 @@ type ChatTopLogprob struct {
 
 // ChatUsage represents the token usage of a chat completion.
 type ChatUsage struct {
-	PromptTokens            int                        `json:"prompt_tokens"`
-	CompletionTokens        int                        `json:"completion_tokens"`
-	TotalTokens             int                        `json:"total_tokens"`
-	PromptTokensDetails     *ChatPromptTokensDetails   `json:"prompt_tokens_details,omitempty"`
+	PromptTokens            int                          `json:"prompt_tokens"`
+	CompletionTokens        int                          `json:"completion_tokens"`
+	TotalTokens             int                          `json:"total_tokens"`
+	PromptTokensDetails     *ChatPromptTokensDetails     `json:"prompt_tokens_details,omitempty"`
 	CompletionTokensDetails *ChatCompletionTokensDetails `json:"completion_tokens_details,omitempty"`
 }
 
@@ -316,18 +316,18 @@ type ChatCompletionChunk struct {
 
 // ChatChunkChoice represents a single choice of a streaming chunk.
 type ChatChunkChoice struct {
-	Index        int           `json:"index"`
-	FinishReason *string       `json:"finish_reason"`
+	Index        int            `json:"index"`
+	FinishReason *string        `json:"finish_reason"`
 	Delta        ChatChunkDelta `json:"delta"`
-	Logprobs     *ChatLogprobs `json:"logprobs,omitempty"`
+	Logprobs     *ChatLogprobs  `json:"logprobs,omitempty"`
 }
 
 // ChatChunkDelta represents the incremental changes of a streaming choice.
 type ChatChunkDelta struct {
-	Role      string             `json:"role,omitempty"`
-	Content   string             `json:"content,omitempty"`
-	Refusal   string             `json:"refusal,omitempty"`
-	Audio     *ChatOutAudio      `json:"audio,omitempty"`
+	Role      string               `json:"role,omitempty"`
+	Content   string               `json:"content,omitempty"`
+	Refusal   string               `json:"refusal,omitempty"`
+	Audio     *ChatOutAudio        `json:"audio,omitempty"`
 	ToolCalls []ChatStreamToolCall `json:"tool_calls,omitempty"`
 }
 

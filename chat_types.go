@@ -337,15 +337,15 @@ type ChatToolChoice struct {
 	Function *ChatToolChoiceFunction `json:"function,omitempty"`
 }
 
+type choiceAlias ChatToolChoice
+
 // MarshalJSON implements the json.Marshaler interface for ChatToolChoice.
 func (tc ChatToolChoice) MarshalJSON() ([]byte, error) {
 	if tc.Mode != "" {
 		return json.Marshal(string(tc.Mode))
 	}
 
-	type choice ChatToolChoice
-
-	return json.Marshal(choice(tc))
+	return json.Marshal(choiceAlias(tc))
 }
 
 // ChatToolChoiceFunction holds the name of the function a named tool choice

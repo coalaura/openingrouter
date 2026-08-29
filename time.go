@@ -41,9 +41,9 @@ func (ft *FlexibleTime) UnmarshalJSON(data []byte) error {
 
 // MarshalJSON implements the json.Marshaler interface for FlexibleTime.
 func (ft FlexibleTime) MarshalJSON() ([]byte, error) {
-	if ft.Time.IsZero() {
+	if ft.IsZero() {
 		return []byte("null"), nil
 	}
 
-	return json.Marshal(ft.Time.Format(time.RFC3339))
+	return json.Marshal(ft.Format(time.RFC3339))
 }
