@@ -97,6 +97,7 @@ func (e errorData) toError(status int, header http.Header) error {
 		return &ProviderError{
 			ErrorStatus:  es,
 			Raw:          meta.Raw,
+			Message:      message,
 			ProviderName: meta.ProviderName,
 			IsBYOK:       meta.IsBYOK,
 		}
@@ -129,6 +130,13 @@ func (e errorData) toError(status int, header http.Header) error {
 			Message:     message,
 			LimitSource: meta.LimitSource,
 			RemedyHint:  meta.RemedyHint,
+		}
+	case meta.ProviderName != "":
+		return &ProviderError{
+			ErrorStatus:  es,
+			Message:      message,
+			ProviderName: meta.ProviderName,
+			IsBYOK:       meta.IsBYOK,
 		}
 	}
 

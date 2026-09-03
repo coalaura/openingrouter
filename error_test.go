@@ -151,6 +151,21 @@ func TestAsOpenRouterErrorShapes(t *testing.T) {
 			},
 		},
 		{
+			name:   "provider error without raw metadata",
+			status: http.StatusBadRequest,
+			body:   `{"error":{"message":"Your request was rejected by the safety system. If you believe this is an error, contact us at help.openai.com and include the request ID req_8a1d4b7e2f9c3560ad1e8f42b7c93d10. safety_violations=[safety]","code":400,"metadata":{"provider_name":"OpenAI"}}}`,
+			want:   "provider error: Your request was rejected by the safety system. If you believe this is an error, contact us at help.openai.com and include the request ID req_8a1d4b7e2f9c3560ad1e8f42b7c93d10. safety_violations=[safety]",
+			wantIs: ErrInvalidRequest,
+			inspect: func(t *testing.T, err error) {
+				provider, ok := errors.AsType[*ProviderError](err)
+
+				tAssertEquals(t, ok, true)
+				tAssertEquals(t, provider.Raw, "")
+				tAssertEquals(t, provider.Message, "Your request was rejected by the safety system. If you believe this is an error, contact us at help.openai.com and include the request ID req_8a1d4b7e2f9c3560ad1e8f42b7c93d10. safety_violations=[safety]")
+				tAssertEquals(t, provider.ProviderName, "OpenAI")
+			},
+		},
+		{
 			name:   "moderation",
 			status: http.StatusForbidden,
 			body:   `{"error":{"code":403,"message":"Input flagged","metadata":{"reasons":["violence","hate"],"flagged_input":"...","provider_name":"Anthropic","model_slug":"anthropic/claude-haiku-4.5"}}}`,

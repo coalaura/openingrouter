@@ -183,6 +183,7 @@ type ProviderError struct {
 	ErrorStatus
 
 	Raw          string
+	Message      string
 	ProviderName string
 	IsBYOK       bool
 }
@@ -191,7 +192,11 @@ type ProviderError struct {
 func (p *ProviderError) Error() string {
 	var sb strings.Builder
 
-	message := parseSubErrorMessage(p.Raw)
+	message := p.Message
+
+	if p.Raw != "" {
+		message = parseSubErrorMessage(p.Raw)
+	}
 
 	sb.Grow(17 + len(message))
 
