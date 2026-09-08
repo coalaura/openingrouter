@@ -103,8 +103,6 @@ func (s *JsonResponseStream[T]) Add(chunks ...T) {
 // yields decoded T values. The returned stream owns resp: call Close (typically
 // via defer) to cancel the reader and release the body.
 func NewServerSentEventsStream[T any](ctx context.Context, resp *http.Response) *ServerSentEventsStream[T] {
-	defer resp.Body.Close()
-
 	out := make(chan T)
 	done := make(chan struct{})
 
@@ -115,6 +113,8 @@ func NewServerSentEventsStream[T any](ctx context.Context, resp *http.Response) 
 	}
 
 	go func() {
+		defer resp.Body.Close()
+
 		defer close(out)
 		defer sse.Close()
 
