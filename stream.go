@@ -113,10 +113,8 @@ func NewServerSentEventsStream[T any](ctx context.Context, resp *http.Response) 
 	}
 
 	go func() {
-		defer resp.Body.Close()
-
 		defer close(out)
-		defer sse.Close()
+		defer sse.Close() // closes resp.Body
 
 		reader := bufio.NewReader(resp.Body)
 
