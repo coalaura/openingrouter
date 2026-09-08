@@ -91,3 +91,28 @@ const (
 	STTTimestampGranularityWord    STTTimestampGranularity = "word"
 	STTTimestampGranularitySegment STTTimestampGranularity = "segment"
 )
+
+// IsValidSTTResponseFormat reports whether the given format string is a valid
+// STTResponseFormat and returns the typed value if valid.
+func IsValidSTTResponseFormat(format string) (STTResponseFormat, bool) {
+	switch STTResponseFormat(format) {
+	case STTResponseFormatJSON,
+		STTResponseFormatVerboseJSON:
+		return STTResponseFormat(format), true
+	}
+
+	return "", false
+}
+
+// IsValidSTTTimestampGranularity reports whether the given granularity string is
+// a valid STTTimestampGranularity and returns the typed value if valid.
+func IsValidSTTTimestampGranularity(granularity string) (STTTimestampGranularity, bool) {
+	switch STTTimestampGranularity(granularity) {
+	case STTTimestampGranularityWord,
+		STTTimestampGranularitySegment:
+		return STTTimestampGranularity(granularity), true
+	}
+
+	return "", false
+}
+

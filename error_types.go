@@ -288,3 +288,41 @@ func (h *HttpError) Error() string {
 
 	return sb.String()
 }
+
+// IsValidErrorType reports whether the given errorType string is a valid
+// ErrorType and returns the typed value if valid.
+func IsValidErrorType(errorType string) (ErrorType, bool) {
+	switch ErrorType(errorType) {
+	case ErrorTypeContextLengthExceeded,
+		ErrorTypeMaxTokensExceeded,
+		ErrorTypeTokenLimitExceeded,
+		ErrorTypeStringTooLong,
+		ErrorTypeAuthentication,
+		ErrorTypePermissionDenied,
+		ErrorTypePaymentRequired,
+		ErrorTypeRateLimitExceeded,
+		ErrorTypeProviderOverloaded,
+		ErrorTypeProviderUnavailable,
+		ErrorTypeInvalidRequest,
+		ErrorTypeInvalidPrompt,
+		ErrorTypeNotFound,
+		ErrorTypePreconditionFailed,
+		ErrorTypePayloadTooLarge,
+		ErrorTypeUnprocessable,
+		ErrorTypeContentPolicy,
+		ErrorTypeRefusal,
+		ErrorTypeInvalidImage,
+		ErrorTypeImageTooLarge,
+		ErrorTypeImageTooSmall,
+		ErrorTypeUnsupportedImage,
+		ErrorTypeImageNotFound,
+		ErrorTypeImageDownloadFailed,
+		ErrorTypeServer,
+		ErrorTypeTimeout,
+		ErrorTypeUnmapped:
+		return ErrorType(errorType), true
+	}
+
+	return "", false
+}
+

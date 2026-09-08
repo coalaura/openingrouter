@@ -110,3 +110,15 @@ type CompletionStreamChoice struct {
 	FinishReason *string             `json:"finish_reason"`
 	Logprobs     *CompletionLogprobs `json:"logprobs,omitempty"`
 }
+
+// IsValidCompletionObject reports whether the given object string is a valid
+// CompletionObject and returns the typed value if valid.
+func IsValidCompletionObject(object string) (CompletionObject, bool) {
+	switch CompletionObject(object) {
+	case CompletionObjectTextCompletion:
+		return CompletionObject(object), true
+	}
+
+	return "", false
+}
+

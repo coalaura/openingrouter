@@ -206,3 +206,43 @@ const (
 	EmbeddingContentPartTypeInputVideo EmbeddingContentPartType = "input_video"
 	EmbeddingContentPartTypeInputFile  EmbeddingContentPartType = "input_file"
 )
+
+// IsValidEmbeddingEncodingFormat reports whether the given format string is a
+// valid EmbeddingEncodingFormat and returns the typed value if valid.
+func IsValidEmbeddingEncodingFormat(format string) (EmbeddingEncodingFormat, bool) {
+	switch EmbeddingEncodingFormat(format) {
+	case EmbeddingEncodingFormatFloat,
+		EmbeddingEncodingFormatBase64:
+		return EmbeddingEncodingFormat(format), true
+	}
+
+	return "", false
+}
+
+// IsValidEmbeddingObject reports whether the given object string is a valid
+// EmbeddingObject and returns the typed value if valid.
+func IsValidEmbeddingObject(object string) (EmbeddingObject, bool) {
+	switch EmbeddingObject(object) {
+	case EmbeddingObjectList,
+		EmbeddingObjectEmbedding:
+		return EmbeddingObject(object), true
+	}
+
+	return "", false
+}
+
+// IsValidEmbeddingContentPartType reports whether the given partType string is a
+// valid EmbeddingContentPartType and returns the typed value if valid.
+func IsValidEmbeddingContentPartType(partType string) (EmbeddingContentPartType, bool) {
+	switch EmbeddingContentPartType(partType) {
+	case EmbeddingContentPartTypeText,
+		EmbeddingContentPartTypeImageURL,
+		EmbeddingContentPartTypeInputAudio,
+		EmbeddingContentPartTypeInputVideo,
+		EmbeddingContentPartTypeInputFile:
+		return EmbeddingContentPartType(partType), true
+	}
+
+	return "", false
+}
+

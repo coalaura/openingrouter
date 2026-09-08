@@ -257,3 +257,134 @@ const (
 	AnthropicUsageIterationTypeMessage        AnthropicUsageIterationType = "message"
 	AnthropicUsageIterationTypeAdvisorMessage AnthropicUsageIterationType = "advisor_message"
 )
+
+// IsValidInputModality reports whether the given modality string is a valid
+// InputModality and returns the typed value if valid.
+func IsValidInputModality(modality string) (InputModality, bool) {
+	switch InputModality(modality) {
+	case InputModalityText,
+		InputModalityImage,
+		InputModalityFile,
+		InputModalityAudio,
+		InputModalityVideo:
+		return InputModality(modality), true
+	}
+
+	return "", false
+}
+
+// IsValidOutputModality reports whether the given modality string is a valid
+// OutputModality and returns the typed value if valid.
+func IsValidOutputModality(modality string) (OutputModality, bool) {
+	switch OutputModality(modality) {
+	case OutputModalityText,
+		OutputModalityImage,
+		OutputModalityEmbeddings,
+		OutputModalityAudio,
+		OutputModalityVideo,
+		OutputModalityRerank,
+		OutputModalitySpeech,
+		OutputModalityTranscription:
+		return OutputModality(modality), true
+	}
+
+	return "", false
+}
+
+// IsValidContentPartType reports whether the given partType string is a valid
+// ContentPartType and returns the typed value if valid.
+func IsValidContentPartType(partType string) (ContentPartType, bool) {
+	switch ContentPartType(partType) {
+	case ContentPartTypeImageURL:
+		return ContentPartType(partType), true
+	}
+
+	return "", false
+}
+
+// IsValidProviderDataCollection reports whether the given collection string is a
+// valid ProviderDataCollection and returns the typed value if valid.
+func IsValidProviderDataCollection(collection string) (ProviderDataCollection, bool) {
+	switch ProviderDataCollection(collection) {
+	case ProviderDataCollectionAllow,
+		ProviderDataCollectionDeny:
+		return ProviderDataCollection(collection), true
+	}
+
+	return "", false
+}
+
+// IsValidQuantization reports whether the given quantization string is a valid
+// Quantization and returns the typed value if valid.
+func IsValidQuantization(quantization string) (Quantization, bool) {
+	switch Quantization(quantization) {
+	case QuantizationInt4,
+		QuantizationInt8,
+		QuantizationFP4,
+		QuantizationMXFP4,
+		QuantizationNVFP4,
+		QuantizationFP6,
+		QuantizationFP8,
+		QuantizationMXFP8,
+		QuantizationFP16,
+		QuantizationBF16,
+		QuantizationFP32,
+		QuantizationUnknown:
+		return Quantization(quantization), true
+	}
+
+	return "", false
+}
+
+// IsValidProviderSort reports whether the given sort string is a valid
+// ProviderSort and returns the typed value if valid.
+func IsValidProviderSort(sort string) (ProviderSort, bool) {
+	switch ProviderSort(sort) {
+	case ProviderSortPrice,
+		ProviderSortThroughput,
+		ProviderSortLatency,
+		ProviderSortExacto:
+		return ProviderSort(sort), true
+	}
+
+	return "", false
+}
+
+// IsValidProviderSortPartition reports whether the given partition string is a
+// valid ProviderSortPartition and returns the typed value if valid.
+func IsValidProviderSortPartition(partition string) (ProviderSortPartition, bool) {
+	switch ProviderSortPartition(partition) {
+	case ProviderSortPartitionModel,
+		ProviderSortPartitionNone:
+		return ProviderSortPartition(partition), true
+	}
+
+	return "", false
+}
+
+// IsValidAnthropicSpeed reports whether the given speed string is a valid
+// AnthropicSpeed and returns the typed value if valid.
+func IsValidAnthropicSpeed(speed string) (AnthropicSpeed, bool) {
+	switch AnthropicSpeed(speed) {
+	case AnthropicSpeedFast,
+		AnthropicSpeedStandard:
+		return AnthropicSpeed(speed), true
+	}
+
+	return "", false
+}
+
+// IsValidAnthropicUsageIterationType reports whether the given iterationType
+// string is a valid AnthropicUsageIterationType and returns the typed value if
+// valid.
+func IsValidAnthropicUsageIterationType(iterationType string) (AnthropicUsageIterationType, bool) {
+	switch AnthropicUsageIterationType(iterationType) {
+	case AnthropicUsageIterationTypeCompaction,
+		AnthropicUsageIterationTypeMessage,
+		AnthropicUsageIterationTypeAdvisorMessage:
+		return AnthropicUsageIterationType(iterationType), true
+	}
+
+	return "", false
+}
+

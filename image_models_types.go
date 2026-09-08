@@ -43,3 +43,17 @@ const (
 	ImageCapabilityTypeEnum    ImageCapabilityType = "enum"
 	ImageCapabilityTypeRange   ImageCapabilityType = "range"
 )
+
+// IsValidImageCapabilityType reports whether the given capabilityType string is a
+// valid ImageCapabilityType and returns the typed value if valid.
+func IsValidImageCapabilityType(capabilityType string) (ImageCapabilityType, bool) {
+	switch ImageCapabilityType(capabilityType) {
+	case ImageCapabilityTypeBoolean,
+		ImageCapabilityTypeEnum,
+		ImageCapabilityTypeRange:
+		return ImageCapabilityType(capabilityType), true
+	}
+
+	return "", false
+}
+

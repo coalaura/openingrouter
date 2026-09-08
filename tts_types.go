@@ -41,3 +41,16 @@ const (
 	SpeechResponseFormatMP3 SpeechResponseFormat = "mp3"
 	SpeechResponseFormatPCM SpeechResponseFormat = "pcm"
 )
+
+// IsValidSpeechResponseFormat reports whether the given format string is a
+// valid SpeechResponseFormat and returns the typed value if valid.
+func IsValidSpeechResponseFormat(format string) (SpeechResponseFormat, bool) {
+	switch SpeechResponseFormat(format) {
+	case SpeechResponseFormatMP3,
+		SpeechResponseFormatPCM:
+		return SpeechResponseFormat(format), true
+	}
+
+	return "", false
+}
+

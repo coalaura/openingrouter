@@ -368,3 +368,174 @@ type ListUserModelsOptions struct {
 	Offset *int `url:"offset,omitempty"`
 	Limit  *int `url:"limit,omitempty"`
 }
+
+// IsValidParameter reports whether the given parameter string is a valid
+// Parameter and returns the typed value if valid.
+func IsValidParameter(parameter string) (Parameter, bool) {
+	switch Parameter(parameter) {
+	case ParameterTemperature,
+		ParameterTopP,
+		ParameterTopK,
+		ParameterMinP,
+		ParameterTopA,
+		ParameterFrequencyPenalty,
+		ParameterPresencePenalty,
+		ParameterRepetitionPenalty,
+		ParameterMaxTokens,
+		ParameterMaxCompletionTokens,
+		ParameterLogitBias,
+		ParameterLogprobs,
+		ParameterTopLogprobs,
+		ParameterPrediction,
+		ParameterSeed,
+		ParameterResponseFormat,
+		ParameterStructuredOutputs,
+		ParameterStop,
+		ParameterTools,
+		ParameterToolChoice,
+		ParameterParallelToolCalls,
+		ParameterIncludeReasoning,
+		ParameterReasoning,
+		ParameterReasoningEffort,
+		ParameterWebSearchOptions,
+		ParameterVerbosity:
+		return Parameter(parameter), true
+	}
+
+	return "", false
+}
+
+// IsValidInstructType reports whether the given instructType string is a valid
+// InstructType and returns the typed value if valid.
+func IsValidInstructType(instructType string) (InstructType, bool) {
+	switch InstructType(instructType) {
+	case InstructTypeNone,
+		InstructTypeAiroboros,
+		InstructTypeAlpaca,
+		InstructTypeAlpacaModif,
+		InstructTypeChatML,
+		InstructTypeClaude,
+		InstructTypeCodeLlama,
+		InstructTypeGemma,
+		InstructTypeLlama2,
+		InstructTypeLlama3,
+		InstructTypeMistral,
+		InstructTypeNemotron,
+		InstructTypeNeural,
+		InstructTypeOpenChat,
+		InstructTypePhi3,
+		InstructTypeRWKV,
+		InstructTypeVicuna,
+		InstructTypeZephyr,
+		InstructTypeDeepSeekR1,
+		InstructTypeDeepSeekV31,
+		InstructTypeQwQ,
+		InstructTypeQwen3:
+		return InstructType(instructType), true
+	}
+
+	return "", false
+}
+
+// IsValidModelGroup reports whether the given group string is a valid
+// ModelGroup and returns the typed value if valid.
+func IsValidModelGroup(group string) (ModelGroup, bool) {
+	switch ModelGroup(group) {
+	case ModelGroupRouter,
+		ModelGroupMedia,
+		ModelGroupOther,
+		ModelGroupGPT,
+		ModelGroupClaude,
+		ModelGroupGemini,
+		ModelGroupGemma,
+		ModelGroupGrok,
+		ModelGroupCohere,
+		ModelGroupNova,
+		ModelGroupQwen,
+		ModelGroupYi,
+		ModelGroupDeepSeek,
+		ModelGroupMistral,
+		ModelGroupLlama2,
+		ModelGroupLlama3,
+		ModelGroupLlama4,
+		ModelGroupPaLM,
+		ModelGroupRWKV,
+		ModelGroupQwen3:
+		return ModelGroup(group), true
+	}
+
+	return "", false
+}
+
+// IsValidReasoningEffort reports whether the given effort string is a valid
+// ReasoningEffort and returns the typed value if valid.
+func IsValidReasoningEffort(effort string) (ReasoningEffort, bool) {
+	switch ReasoningEffort(effort) {
+	case ReasoningEffortMax,
+		ReasoningEffortXHigh,
+		ReasoningEffortHigh,
+		ReasoningEffortMedium,
+		ReasoningEffortLow,
+		ReasoningEffortMinimal,
+		ReasoningEffortNone:
+		return ReasoningEffort(effort), true
+	}
+
+	return "", false
+}
+
+// IsValidModelCategory reports whether the given category string is a valid
+// ModelCategory and returns the typed value if valid.
+func IsValidModelCategory(category string) (ModelCategory, bool) {
+	switch ModelCategory(category) {
+	case ModelCategoryProgramming,
+		ModelCategoryRoleplay,
+		ModelCategoryMarketing,
+		ModelCategoryMarketingSEO,
+		ModelCategoryTechnology,
+		ModelCategoryScience,
+		ModelCategoryTranslation,
+		ModelCategoryLegal,
+		ModelCategoryFinance,
+		ModelCategoryHealth,
+		ModelCategoryTrivia,
+		ModelCategoryAcademia:
+		return ModelCategory(category), true
+	}
+
+	return "", false
+}
+
+// IsValidModelSort reports whether the given sort string is a valid
+// ModelSort and returns the typed value if valid.
+func IsValidModelSort(sort string) (ModelSort, bool) {
+	switch ModelSort(sort) {
+	case ModelSortMostPopular,
+		ModelSortNewest,
+		ModelSortTopWeekly,
+		ModelSortPricingLowToHigh,
+		ModelSortPricingHighToLow,
+		ModelSortContextHighToLow,
+		ModelSortThroughputHighToLow,
+		ModelSortLatencyLowToHigh,
+		ModelSortIntelligenceHighToLow,
+		ModelSortCodingHighToLow,
+		ModelSortAgenticHighToLow,
+		ModelSortDesignArenaELOHighToLow:
+		return ModelSort(sort), true
+	}
+
+	return "", false
+}
+
+// IsValidModelRegion reports whether the given region string is a valid
+// ModelRegion and returns the typed value if valid.
+func IsValidModelRegion(region string) (ModelRegion, bool) {
+	switch ModelRegion(region) {
+	case ModelRegionEU:
+		return ModelRegion(region), true
+	}
+
+	return "", false
+}
+

@@ -151,3 +151,24 @@ func tAssertMP3Header(t testing.TB, header []byte) {
 
 	t.Fatalf("expected mp3 header, got: %v", header)
 }
+
+func tAssertEnumValidation[T ~string](t testing.TB, validValues []T, validate func(string) (T, bool)) {
+	t.Helper()
+
+	for _, value := range validValues {
+		actual, ok := validate(string(value))
+
+		tAssertEquals(t, ok, true)
+		tAssertEquals(t, actual, value)
+	}
+
+	invalidActual, ok := validate("invalid_enum_value_does_not_exist")
+
+	tAssertEquals(t, ok, false)
+	tAssertEquals(t, invalidActual, T(""))
+
+	emptyActual, ok := validate("")
+
+	tAssertEquals(t, ok, false)
+	tAssertEquals(t, emptyActual, T(""))
+}

@@ -1337,3 +1337,510 @@ const (
 	PipelineStageTypeResponseHealing    PipelineStageType = "response_healing"
 	PipelineStageTypeContextCompression PipelineStageType = "context_compression"
 )
+
+// IsValidChatMetadataLevel reports whether the given level string is a valid
+// ChatMetadataLevel and returns the typed value if valid.
+func IsValidChatMetadataLevel(level string) (ChatMetadataLevel, bool) {
+	switch ChatMetadataLevel(level) {
+	case ChatMetadataLevelDisabled,
+		ChatMetadataLevelEnabled:
+		return ChatMetadataLevel(level), true
+	}
+
+	return "", false
+}
+
+// IsValidChatRole reports whether the given role string is a valid
+// ChatRole and returns the typed value if valid.
+func IsValidChatRole(role string) (ChatRole, bool) {
+	switch ChatRole(role) {
+	case ChatRoleSystem,
+		ChatRoleDeveloper,
+		ChatRoleUser,
+		ChatRoleAssistant,
+		ChatRoleTool:
+		return ChatRole(role), true
+	}
+
+	return "", false
+}
+
+// IsValidChatContentPartType reports whether the given partType string is a valid
+// ChatContentPartType and returns the typed value if valid.
+func IsValidChatContentPartType(partType string) (ChatContentPartType, bool) {
+	switch ChatContentPartType(partType) {
+	case ChatContentPartTypeText,
+		ChatContentPartTypeImageURL,
+		ChatContentPartTypeInputAudio,
+		ChatContentPartTypeVideoURL,
+		ChatContentPartTypeFile,
+		ChatContentPartTypeInputVideo:
+		return ChatContentPartType(partType), true
+	}
+
+	return "", false
+}
+
+// IsValidChatImageDetail reports whether the given detail string is a valid
+// ChatImageDetail and returns the typed value if valid.
+func IsValidChatImageDetail(detail string) (ChatImageDetail, bool) {
+	switch ChatImageDetail(detail) {
+	case ChatImageDetailAuto,
+		ChatImageDetailLow,
+		ChatImageDetailHigh,
+		ChatImageDetailOriginal:
+		return ChatImageDetail(detail), true
+	}
+
+	return "", false
+}
+
+// IsValidAnthropicCacheControlType reports whether the given controlType string
+// is a valid AnthropicCacheControlType and returns the typed value if valid.
+func IsValidAnthropicCacheControlType(controlType string) (AnthropicCacheControlType, bool) {
+	switch AnthropicCacheControlType(controlType) {
+	case AnthropicCacheControlTypeEphemeral:
+		return AnthropicCacheControlType(controlType), true
+	}
+
+	return "", false
+}
+
+// IsValidAnthropicCacheTTL reports whether the given ttl string is a valid
+// AnthropicCacheTTL and returns the typed value if valid.
+func IsValidAnthropicCacheTTL(ttl string) (AnthropicCacheTTL, bool) {
+	switch AnthropicCacheTTL(ttl) {
+	case AnthropicCacheTTL5M,
+		AnthropicCacheTTL1H:
+		return AnthropicCacheTTL(ttl), true
+	}
+
+	return "", false
+}
+
+// IsValidChatPromptCacheMode reports whether the given mode string is a valid
+// ChatPromptCacheMode and returns the typed value if valid.
+func IsValidChatPromptCacheMode(mode string) (ChatPromptCacheMode, bool) {
+	switch ChatPromptCacheMode(mode) {
+	case ChatPromptCacheModeExplicit:
+		return ChatPromptCacheMode(mode), true
+	}
+
+	return "", false
+}
+
+// IsValidChatServiceTier reports whether the given tier string is a valid
+// ChatServiceTier and returns the typed value if valid.
+func IsValidChatServiceTier(tier string) (ChatServiceTier, bool) {
+	switch ChatServiceTier(tier) {
+	case ChatServiceTierAuto,
+		ChatServiceTierDefault,
+		ChatServiceTierFlex,
+		ChatServiceTierPriority,
+		ChatServiceTierScale:
+		return ChatServiceTier(tier), true
+	}
+
+	return "", false
+}
+
+// IsValidChatReasoningSummary reports whether the given summary string is a valid
+// ChatReasoningSummary and returns the typed value if valid.
+func IsValidChatReasoningSummary(summary string) (ChatReasoningSummary, bool) {
+	switch ChatReasoningSummary(summary) {
+	case ChatReasoningSummaryAuto,
+		ChatReasoningSummaryConcise,
+		ChatReasoningSummaryDetailed:
+		return ChatReasoningSummary(summary), true
+	}
+
+	return "", false
+}
+
+// IsValidChatPredictionType reports whether the given predictionType string is a
+// valid ChatPredictionType and returns the typed value if valid.
+func IsValidChatPredictionType(predictionType string) (ChatPredictionType, bool) {
+	switch ChatPredictionType(predictionType) {
+	case ChatPredictionTypeContent:
+		return ChatPredictionType(predictionType), true
+	}
+
+	return "", false
+}
+
+// IsValidChatResponseFormatType reports whether the given formatType string is a
+// valid ChatResponseFormatType and returns the typed value if valid.
+func IsValidChatResponseFormatType(formatType string) (ChatResponseFormatType, bool) {
+	switch ChatResponseFormatType(formatType) {
+	case ChatResponseFormatTypeText,
+		ChatResponseFormatTypeJSONObject,
+		ChatResponseFormatTypeJSONSchema,
+		ChatResponseFormatTypeGrammar,
+		ChatResponseFormatTypePython:
+		return ChatResponseFormatType(formatType), true
+	}
+
+	return "", false
+}
+
+// IsValidChatRoute reports whether the given route string is a valid
+// ChatRoute and returns the typed value if valid.
+func IsValidChatRoute(route string) (ChatRoute, bool) {
+	switch ChatRoute(route) {
+	case ChatRouteFallback,
+		ChatRouteSort:
+		return ChatRoute(route), true
+	}
+
+	return "", false
+}
+
+// IsValidChatStopConditionType reports whether the given conditionType string is
+// a valid ChatStopConditionType and returns the typed value if valid.
+func IsValidChatStopConditionType(conditionType string) (ChatStopConditionType, bool) {
+	switch ChatStopConditionType(conditionType) {
+	case ChatStopConditionTypeStepCountIs,
+		ChatStopConditionTypeHasToolCall,
+		ChatStopConditionTypeMaxTokensUsed,
+		ChatStopConditionTypeMaxCost,
+		ChatStopConditionTypeFinishReasonIs:
+		return ChatStopConditionType(conditionType), true
+	}
+
+	return "", false
+}
+
+// IsValidChatToolType reports whether the given toolType string is a valid
+// ChatToolType and returns the typed value if valid.
+func IsValidChatToolType(toolType string) (ChatToolType, bool) {
+	switch ChatToolType(toolType) {
+	case ChatToolTypeFunction,
+		ChatToolTypeAdvisor,
+		ChatToolTypeBash,
+		ChatToolTypeDatetime,
+		ChatToolTypeFiles,
+		ChatToolTypeFusion,
+		ChatToolTypeImageGeneration,
+		ChatToolTypeSearchModels,
+		ChatToolTypeSubagent,
+		ChatToolTypeWebFetch,
+		ChatToolTypeWebSearch,
+		ChatToolTypeWebSearchShorthand,
+		ChatToolTypeWebSearchPreview,
+		ChatToolTypeWebSearchPreview20250311,
+		ChatToolTypeWebSearch20250826:
+		return ChatToolType(toolType), true
+	}
+
+	return "", false
+}
+
+// IsValidChatToolChoiceMode reports whether the given mode string is a valid
+// ChatToolChoiceMode and returns the typed value if valid.
+func IsValidChatToolChoiceMode(mode string) (ChatToolChoiceMode, bool) {
+	switch ChatToolChoiceMode(mode) {
+	case ChatToolChoiceModeNone,
+		ChatToolChoiceModeAuto,
+		ChatToolChoiceModeRequired:
+		return ChatToolChoiceMode(mode), true
+	}
+
+	return "", false
+}
+
+// IsValidChatBashEngine reports whether the given engine string is a valid
+// ChatBashEngine and returns the typed value if valid.
+func IsValidChatBashEngine(engine string) (ChatBashEngine, bool) {
+	switch ChatBashEngine(engine) {
+	case ChatBashEngineAuto,
+		ChatBashEngineNative,
+		ChatBashEngineOpenRouter:
+		return ChatBashEngine(engine), true
+	}
+
+	return "", false
+}
+
+// IsValidChatBashEnvironmentType reports whether the given environmentType string
+// is a valid ChatBashEnvironmentType and returns the typed value if valid.
+func IsValidChatBashEnvironmentType(environmentType string) (ChatBashEnvironmentType, bool) {
+	switch ChatBashEnvironmentType(environmentType) {
+	case ChatBashEnvironmentTypeContainerAuto,
+		ChatBashEnvironmentTypeContainerReference:
+		return ChatBashEnvironmentType(environmentType), true
+	}
+
+	return "", false
+}
+
+// IsValidChatWebSearchEngine reports whether the given engine string is a valid
+// ChatWebSearchEngine and returns the typed value if valid.
+func IsValidChatWebSearchEngine(engine string) (ChatWebSearchEngine, bool) {
+	switch ChatWebSearchEngine(engine) {
+	case ChatWebSearchEngineAuto,
+		ChatWebSearchEngineNative,
+		ChatWebSearchEngineExa,
+		ChatWebSearchEngineParallel,
+		ChatWebSearchEngineFirecrawl,
+		ChatWebSearchEnginePerplexity:
+		return ChatWebSearchEngine(engine), true
+	}
+
+	return "", false
+}
+
+// IsValidChatWebFetchEngine reports whether the given engine string is a valid
+// ChatWebFetchEngine and returns the typed value if valid.
+func IsValidChatWebFetchEngine(engine string) (ChatWebFetchEngine, bool) {
+	switch ChatWebFetchEngine(engine) {
+	case ChatWebFetchEngineAuto,
+		ChatWebFetchEngineNative,
+		ChatWebFetchEngineOpenRouter,
+		ChatWebFetchEngineExa,
+		ChatWebFetchEngineParallel,
+		ChatWebFetchEngineFirecrawl:
+		return ChatWebFetchEngine(engine), true
+	}
+
+	return "", false
+}
+
+// IsValidChatSearchContextSize reports whether the given size string is a valid
+// ChatSearchContextSize and returns the typed value if valid.
+func IsValidChatSearchContextSize(size string) (ChatSearchContextSize, bool) {
+	switch ChatSearchContextSize(size) {
+	case ChatSearchContextSizeLow,
+		ChatSearchContextSizeMedium,
+		ChatSearchContextSizeHigh:
+		return ChatSearchContextSize(size), true
+	}
+
+	return "", false
+}
+
+// IsValidChatUserLocationType reports whether the given locationType string is a
+// valid ChatUserLocationType and returns the typed value if valid.
+func IsValidChatUserLocationType(locationType string) (ChatUserLocationType, bool) {
+	switch ChatUserLocationType(locationType) {
+	case ChatUserLocationTypeApproximate:
+		return ChatUserLocationType(locationType), true
+	}
+
+	return "", false
+}
+
+// IsValidChatPluginID reports whether the given pluginID string is a valid
+// ChatPluginID and returns the typed value if valid.
+func IsValidChatPluginID(pluginID string) (ChatPluginID, bool) {
+	switch ChatPluginID(pluginID) {
+	case ChatPluginIDAutoRouter,
+		ChatPluginIDAutoBetaRouter,
+		ChatPluginIDModeration,
+		ChatPluginIDWeb,
+		ChatPluginIDWebFetch,
+		ChatPluginIDFileParser,
+		ChatPluginIDResponseHealing,
+		ChatPluginIDContextCompression,
+		ChatPluginIDParetoRouter,
+		ChatPluginIDFusion:
+		return ChatPluginID(pluginID), true
+	}
+
+	return "", false
+}
+
+// IsValidChatCostTier reports whether the given tier string is a valid
+// ChatCostTier and returns the typed value if valid.
+func IsValidChatCostTier(tier string) (ChatCostTier, bool) {
+	switch ChatCostTier(tier) {
+	case ChatCostTierLow,
+		ChatCostTierMedium,
+		ChatCostTierHigh,
+		ChatCostTierXHigh,
+		ChatCostTierMax:
+		return ChatCostTier(tier), true
+	}
+
+	return "", false
+}
+
+// IsValidChatContextCompressionEngine reports whether the given engine string is
+// a valid ChatContextCompressionEngine and returns the typed value if valid.
+func IsValidChatContextCompressionEngine(engine string) (ChatContextCompressionEngine, bool) {
+	switch ChatContextCompressionEngine(engine) {
+	case ChatContextCompressionEngineMiddleOut:
+		return ChatContextCompressionEngine(engine), true
+	}
+
+	return "", false
+}
+
+// IsValidChatPDFParserEngine reports whether the given engine string is a valid
+// ChatPDFParserEngine and returns the typed value if valid.
+func IsValidChatPDFParserEngine(engine string) (ChatPDFParserEngine, bool) {
+	switch ChatPDFParserEngine(engine) {
+	case ChatPDFParserEngineMistralOCR,
+		ChatPDFParserEngineNative,
+		ChatPDFParserEngineCloudflareAI,
+		ChatPDFParserEnginePDFText:
+		return ChatPDFParserEngine(engine), true
+	}
+
+	return "", false
+}
+
+// IsValidChatFusionPreset reports whether the given preset string is a valid
+// ChatFusionPreset and returns the typed value if valid.
+func IsValidChatFusionPreset(preset string) (ChatFusionPreset, bool) {
+	switch ChatFusionPreset(preset) {
+	case ChatFusionPresetGeneralHigh,
+		ChatFusionPresetGeneralBudget,
+		ChatFusionPresetGeneralFast:
+		return ChatFusionPreset(preset), true
+	}
+
+	return "", false
+}
+
+// IsValidChatParetoPriceSource reports whether the given priceSource string is a
+// valid ChatParetoPriceSource and returns the typed value if valid.
+func IsValidChatParetoPriceSource(priceSource string) (ChatParetoPriceSource, bool) {
+	switch ChatParetoPriceSource(priceSource) {
+	case ChatParetoPriceSourcePrompt,
+		ChatParetoPriceSourceWeightedAvg:
+		return ChatParetoPriceSource(priceSource), true
+	}
+
+	return "", false
+}
+
+// IsValidChatObject reports whether the given object string is a valid
+// ChatObject and returns the typed value if valid.
+func IsValidChatObject(object string) (ChatObject, bool) {
+	switch ChatObject(object) {
+	case ChatObjectCompletion,
+		ChatObjectCompletionChunk:
+		return ChatObject(object), true
+	}
+
+	return "", false
+}
+
+// IsValidChatFinishReason reports whether the given reason string is a valid
+// ChatFinishReason and returns the typed value if valid.
+func IsValidChatFinishReason(reason string) (ChatFinishReason, bool) {
+	switch ChatFinishReason(reason) {
+	case ChatFinishReasonToolCalls,
+		ChatFinishReasonStop,
+		ChatFinishReasonLength,
+		ChatFinishReasonContentFilter,
+		ChatFinishReasonError:
+		return ChatFinishReason(reason), true
+	}
+
+	return "", false
+}
+
+// IsValidChatReasoningDetailType reports whether the given detailType string is a
+// valid ChatReasoningDetailType and returns the typed value if valid.
+func IsValidChatReasoningDetailType(detailType string) (ChatReasoningDetailType, bool) {
+	switch ChatReasoningDetailType(detailType) {
+	case ChatReasoningDetailTypeSummary,
+		ChatReasoningDetailTypeEncrypted,
+		ChatReasoningDetailTypeText,
+		ChatReasoningDetailTypeServerToolCall:
+		return ChatReasoningDetailType(detailType), true
+	}
+
+	return "", false
+}
+
+// IsValidChatReasoningFormat reports whether the given format string is a valid
+// ChatReasoningFormat and returns the typed value if valid.
+func IsValidChatReasoningFormat(format string) (ChatReasoningFormat, bool) {
+	switch ChatReasoningFormat(format) {
+	case ChatReasoningFormatUnknown,
+		ChatReasoningFormatOpenAIResponsesV1,
+		ChatReasoningFormatAzureOpenAIResponsesV1,
+		ChatReasoningFormatBedrockOpenAIResponsesV1,
+		ChatReasoningFormatXAIResponsesV1,
+		ChatReasoningFormatMetaResponsesV1,
+		ChatReasoningFormatAnthropicClaudeV1,
+		ChatReasoningFormatGoogleGeminiV1:
+		return ChatReasoningFormat(format), true
+	}
+
+	return "", false
+}
+
+// IsValidChatErrorType reports whether the given errorType string is a valid
+// ChatErrorType and returns the typed value if valid.
+func IsValidChatErrorType(errorType string) (ChatErrorType, bool) {
+	switch ChatErrorType(errorType) {
+	case ChatErrorTypeContextLengthExceeded,
+		ChatErrorTypeMaxTokensExceeded,
+		ChatErrorTypeTokenLimitExceeded,
+		ChatErrorTypeStringTooLong,
+		ChatErrorTypeAuthentication,
+		ChatErrorTypePermissionDenied,
+		ChatErrorTypePaymentRequired,
+		ChatErrorTypeRateLimitExceeded,
+		ChatErrorTypeProviderOverloaded,
+		ChatErrorTypeProviderUnavailable,
+		ChatErrorTypeInvalidRequest,
+		ChatErrorTypeInvalidPrompt,
+		ChatErrorTypeNotFound,
+		ChatErrorTypePreconditionFailed,
+		ChatErrorTypePayloadTooLarge,
+		ChatErrorTypeUnprocessable,
+		ChatErrorTypeContentPolicyViolation,
+		ChatErrorTypeRefusal,
+		ChatErrorTypeInvalidImage,
+		ChatErrorTypeImageTooLarge,
+		ChatErrorTypeImageTooSmall,
+		ChatErrorTypeUnsupportedImageFormat,
+		ChatErrorTypeImageNotFound,
+		ChatErrorTypeImageDownloadFailed,
+		ChatErrorTypeServer,
+		ChatErrorTypeTimeout,
+		ChatErrorTypeUnmapped:
+		return ChatErrorType(errorType), true
+	}
+
+	return "", false
+}
+
+// IsValidRoutingStrategy reports whether the given strategy string is a valid
+// RoutingStrategy and returns the typed value if valid.
+func IsValidRoutingStrategy(strategy string) (RoutingStrategy, bool) {
+	switch RoutingStrategy(strategy) {
+	case RoutingStrategyDirect,
+		RoutingStrategyAuto,
+		RoutingStrategyFree,
+		RoutingStrategyLatest,
+		RoutingStrategyAlias,
+		RoutingStrategyFallback,
+		RoutingStrategyPareto,
+		RoutingStrategyBodybuilder,
+		RoutingStrategyFusion:
+		return RoutingStrategy(strategy), true
+	}
+
+	return "", false
+}
+
+// IsValidPipelineStageType reports whether the given stageType string is a valid
+// PipelineStageType and returns the typed value if valid.
+func IsValidPipelineStageType(stageType string) (PipelineStageType, bool) {
+	switch PipelineStageType(stageType) {
+	case PipelineStageTypeGuardrail,
+		PipelineStageTypePlugin,
+		PipelineStageTypeServerTools,
+		PipelineStageTypeResponseHealing,
+		PipelineStageTypeContextCompression:
+		return PipelineStageType(stageType), true
+	}
+
+	return "", false
+}
+

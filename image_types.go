@@ -194,3 +194,118 @@ const (
 	ImageStreamPhaseReasoning ImageStreamPhase = "reasoning"
 	ImageStreamPhaseDraft     ImageStreamPhase = "draft"
 )
+
+// IsValidImageAspectRatio reports whether the given ratio string is a valid
+// ImageAspectRatio and returns the typed value if valid.
+func IsValidImageAspectRatio(ratio string) (ImageAspectRatio, bool) {
+	switch ImageAspectRatio(ratio) {
+	case ImageAspectRatio1x1,
+		ImageAspectRatio1x2,
+		ImageAspectRatio1x4,
+		ImageAspectRatio1x8,
+		ImageAspectRatio2x1,
+		ImageAspectRatio2x3,
+		ImageAspectRatio3x2,
+		ImageAspectRatio3x4,
+		ImageAspectRatio4x1,
+		ImageAspectRatio4x3,
+		ImageAspectRatio4x5,
+		ImageAspectRatio5x4,
+		ImageAspectRatio8x1,
+		ImageAspectRatio9x16,
+		ImageAspectRatio16x9,
+		ImageAspectRatio9x19Point5,
+		ImageAspectRatio19Point5x9,
+		ImageAspectRatio9x20,
+		ImageAspectRatio20x9,
+		ImageAspectRatio9x21,
+		ImageAspectRatio21x9,
+		ImageAspectRatioAuto:
+		return ImageAspectRatio(ratio), true
+	}
+
+	return "", false
+}
+
+// IsValidImageBackground reports whether the given background string is a valid
+// ImageBackground and returns the typed value if valid.
+func IsValidImageBackground(background string) (ImageBackground, bool) {
+	switch ImageBackground(background) {
+	case ImageBackgroundAuto,
+		ImageBackgroundTransparent,
+		ImageBackgroundOpaque:
+		return ImageBackground(background), true
+	}
+
+	return "", false
+}
+
+// IsValidImageOutputFormat reports whether the given format string is a valid
+// ImageOutputFormat and returns the typed value if valid.
+func IsValidImageOutputFormat(format string) (ImageOutputFormat, bool) {
+	switch ImageOutputFormat(format) {
+	case ImageOutputFormatPNG,
+		ImageOutputFormatJPEG,
+		ImageOutputFormatWebP,
+		ImageOutputFormatSVG:
+		return ImageOutputFormat(format), true
+	}
+
+	return "", false
+}
+
+// IsValidImageQuality reports whether the given quality string is a valid
+// ImageQuality and returns the typed value if valid.
+func IsValidImageQuality(quality string) (ImageQuality, bool) {
+	switch ImageQuality(quality) {
+	case ImageQualityAuto,
+		ImageQualityLow,
+		ImageQualityMedium,
+		ImageQualityHigh:
+		return ImageQuality(quality), true
+	}
+
+	return "", false
+}
+
+// IsValidImageResolution reports whether the given resolution string is a valid
+// ImageResolution and returns the typed value if valid.
+func IsValidImageResolution(resolution string) (ImageResolution, bool) {
+	switch ImageResolution(resolution) {
+	case ImageResolution512,
+		ImageResolution1K,
+		ImageResolution2K,
+		ImageResolution4K:
+		return ImageResolution(resolution), true
+	}
+
+	return "", false
+}
+
+// IsValidImageStreamEventType reports whether the given eventType string is a
+// valid ImageStreamEventType and returns the typed value if valid.
+func IsValidImageStreamEventType(eventType string) (ImageStreamEventType, bool) {
+	switch ImageStreamEventType(eventType) {
+	case ImageStreamEventTypePartialImage,
+		ImageStreamEventTypeTextChunk,
+		ImageStreamEventTypeCompleted,
+		ImageStreamEventTypeError:
+		return ImageStreamEventType(eventType), true
+	}
+
+	return "", false
+}
+
+// IsValidImageStreamPhase reports whether the given phase string is a valid
+// ImageStreamPhase and returns the typed value if valid.
+func IsValidImageStreamPhase(phase string) (ImageStreamPhase, bool) {
+	switch ImageStreamPhase(phase) {
+	case ImageStreamPhaseContent,
+		ImageStreamPhaseReasoning,
+		ImageStreamPhaseDraft:
+		return ImageStreamPhase(phase), true
+	}
+
+	return "", false
+}
+

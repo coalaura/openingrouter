@@ -40,3 +40,17 @@ const (
 	ApiKeyLimitResetWeekly  ApiKeyLimitReset = "weekly"
 	ApiKeyLimitResetMonthly ApiKeyLimitReset = "monthly"
 )
+
+// IsValidApiKeyLimitReset reports whether the given reset string is a valid
+// ApiKeyLimitReset and returns the typed value if valid.
+func IsValidApiKeyLimitReset(reset string) (ApiKeyLimitReset, bool) {
+	switch ApiKeyLimitReset(reset) {
+	case ApiKeyLimitResetDaily,
+		ApiKeyLimitResetWeekly,
+		ApiKeyLimitResetMonthly:
+		return ApiKeyLimitReset(reset), true
+	}
+
+	return "", false
+}
+
