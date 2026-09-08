@@ -49,11 +49,11 @@ func (c *Client) GenerateImageStream(ctx context.Context, request ImageGeneratio
 		return nil, err
 	}
 
-	defer resp.Body.Close()
-
 	if IsResponseServerSentEventsStream(resp) {
 		return NewServerSentEventsStream[ImageStreamEvent](ctx, resp), nil
 	}
+
+	defer resp.Body.Close()
 
 	var fallback ImageGenerationResponse
 
