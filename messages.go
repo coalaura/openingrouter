@@ -61,3 +61,49 @@ func UserMessageWithImage(text, imageURL string) ChatMessage {
 		},
 	}
 }
+
+// UserMessageWithAudio creates a new user message with text and base64-encoded audio.
+// Audio data must be raw base64, not a URL or data URL. Format is a provider-supported
+// audio format such as "wav" or "mp3".
+func UserMessageWithAudio(text, audioData, format string) ChatMessage {
+	return ChatMessage{
+		Role: ChatRoleUser,
+		Content: ChatContent{
+			Parts: []ChatContentPart{
+				{
+					Type: ChatContentPartTypeText,
+					Text: text,
+				},
+				{
+					Type: ChatContentPartTypeInputAudio,
+					InputAudio: &ChatContentInputAudio{
+						Data:   audioData,
+						Format: format,
+					},
+				},
+			},
+		},
+	}
+}
+
+// UserMessageWithVideo creates a new user message with text and a video URL.
+// The URL may be an HTTP(S) URL or a base64 data URL. URL support varies by provider.
+func UserMessageWithVideo(text, videoURL string) ChatMessage {
+	return ChatMessage{
+		Role: ChatRoleUser,
+		Content: ChatContent{
+			Parts: []ChatContentPart{
+				{
+					Type: ChatContentPartTypeText,
+					Text: text,
+				},
+				{
+					Type: ChatContentPartTypeVideoURL,
+					VideoURL: &ChatContentVideoURL{
+						URL: videoURL,
+					},
+				},
+			},
+		},
+	}
+}

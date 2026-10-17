@@ -84,6 +84,30 @@ for {
 
 Optional fields use pointers (`new(true)`, `new(0.7)`). Zero values and nil pointers are omitted from the request body. Set `MetadataLevel` to receive routing metadata.
 
+### Audio and video messages
+
+Use a model that supports the corresponding input modality. These helpers create user messages with a text part followed by the media part:
+
+```go
+audioMessage := openingrouter.UserMessageWithAudio("Transcribe this audio", base64Audio, "wav")
+videoMessage := openingrouter.UserMessageWithVideo("Summarize this video", "https://example.com/video.mp4")
+localVideoMessage := openingrouter.UserMessageWithVideo("Describe this clip", "data:video/mp4;base64,"+base64Video)
+```
+
+Pass these messages in `ChatCompletionRequest.Messages` with either `CreateChatCompletion` or `CreateChatCompletionStream`.
+
+Audio uses `input_audio` with raw base64-encoded data and a format such as `wav` or `mp3`; audio URLs and data URLs are not supported. Supported formats vary by provider. Video uses `video_url` with an HTTP(S) URL or a base64 data URL; direct URL support also varies by provider.
+
+Set `ChatContentVideoURL.Processing` to `ChatVideoProcessingAgentic` for prompt-driven navigation or `ChatVideoProcessingStatic` for fixed-frame-rate sampling:
+
+```go
+videoMessage.Content.Parts[1].VideoURL.Processing = openingrouter.ChatVideoProcessingAgentic
+```
+
+Processing modes are currently a Google Gemini feature; other providers ignore the field. Leaving it empty omits `processing` and uses the provider's default.
+
+For multiple attachments or mixed media in one message, populate `ChatContent.Parts` with `ChatContentPartTypeInputAudio` and `ChatContentInputAudio`, or `ChatContentPartTypeVideoURL` and `ChatContentVideoURL`. See the OpenRouter [audio](https://openrouter.ai/docs/guides/overview/multimodal/audio) and [video](https://openrouter.ai/docs/guides/overview/multimodal/videos) guides for provider-specific support.
+
 ## Embeddings
 
 ```go

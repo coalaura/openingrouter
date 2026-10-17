@@ -459,6 +459,13 @@ func TestValidateChatEnums(t *testing.T) {
 
 	tAssertEnumValidation(t, chatImageDetailValues, IsValidChatImageDetail)
 
+	chatVideoProcessingValues := []ChatVideoProcessing{
+		ChatVideoProcessingAgentic,
+		ChatVideoProcessingStatic,
+	}
+
+	tAssertEnumValidation(t, chatVideoProcessingValues, IsValidChatVideoProcessing)
+
 	anthropicCacheControlTypeValues := []AnthropicCacheControlType{
 		AnthropicCacheControlTypeEphemeral,
 	}

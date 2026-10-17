@@ -269,9 +269,11 @@ type ChatContentInputAudio struct {
 }
 
 // ChatContentVideoURL holds the url of a video content part, as a base64 data
-// url or an HTTP(S) url.
+// url or an HTTP(S) url. Processing optionally selects a Gemini video processing
+// mode; when omitted, the provider's default applies. Other providers ignore it.
 type ChatContentVideoURL struct {
-	URL string `json:"url"`
+	URL        string              `json:"url"`
+	Processing ChatVideoProcessing `json:"processing,omitempty"`
 }
 
 // ChatContentFile holds the document of a file content part, either inline as a
@@ -996,6 +998,16 @@ const (
 	ChatImageDetailOriginal ChatImageDetail = "original"
 )
 
+// ChatVideoProcessing is the processing mode of a video content part.
+type ChatVideoProcessing string
+
+const (
+	// ChatVideoProcessingAgentic lets the model navigate the video as needed.
+	ChatVideoProcessingAgentic ChatVideoProcessing = "agentic"
+	// ChatVideoProcessingStatic samples the video at a fixed frame rate in one pass.
+	ChatVideoProcessingStatic ChatVideoProcessing = "static"
+)
+
 // AnthropicCacheControlType is the type of a cache control directive.
 type AnthropicCacheControlType string
 
@@ -1390,6 +1402,17 @@ func IsValidChatImageDetail(detail string) (ChatImageDetail, bool) {
 		ChatImageDetailHigh,
 		ChatImageDetailOriginal:
 		return ChatImageDetail(detail), true
+	}
+
+	return "", false
+}
+
+// IsValidChatVideoProcessing reports whether the given processing string is a valid
+// ChatVideoProcessing and returns the typed value if valid.
+func IsValidChatVideoProcessing(processing string) (ChatVideoProcessing, bool) {
+	switch ChatVideoProcessing(processing) {
+	case ChatVideoProcessingAgentic, ChatVideoProcessingStatic:
+		return ChatVideoProcessing(processing), true
 	}
 
 	return "", false
@@ -1843,4 +1866,3 @@ func IsValidPipelineStageType(stageType string) (PipelineStageType, bool) {
 
 	return "", false
 }
-
