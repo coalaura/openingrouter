@@ -190,19 +190,20 @@ type FrontendRegionOverride struct {
 
 // FrontendPricing represents endpoint pricing information.
 type FrontendPricing struct {
-	Prompt            StringifiedNumber        `json:"prompt"`
-	Completion        StringifiedNumber        `json:"completion"`
-	Image             StringifiedNumber        `json:"image,omitempty"`
-	ImageOutput       StringifiedNumber        `json:"image_output,omitempty"`
-	Audio             StringifiedNumber        `json:"audio,omitempty"`
-	InputAudioCache   StringifiedNumber        `json:"input_audio_cache,omitempty"`
-	InputCacheRead    StringifiedNumber        `json:"input_cache_read,omitempty"`
-	InputCacheWrite   StringifiedNumber        `json:"input_cache_write,omitempty"`
-	InternalReasoning StringifiedNumber        `json:"internal_reasoning,omitempty"`
-	WebSearch         StringifiedNumber        `json:"web_search,omitempty"`
-	Discount          float64                  `json:"discount"`
-	DisplayPricing    []FrontendDisplayPricing `json:"display_pricing,omitempty"`
-	LineItems         []FrontendLineItem       `json:"line_items,omitempty"`
+	Prompt            StringifiedNumber         `json:"prompt"`
+	Completion        StringifiedNumber         `json:"completion"`
+	Image             StringifiedNumber         `json:"image,omitempty"`
+	ImageOutput       StringifiedNumber         `json:"image_output,omitempty"`
+	Audio             StringifiedNumber         `json:"audio,omitempty"`
+	InputAudioCache   StringifiedNumber         `json:"input_audio_cache,omitempty"`
+	InputCacheRead    StringifiedNumber         `json:"input_cache_read,omitempty"`
+	InputCacheWrite   StringifiedNumber         `json:"input_cache_write,omitempty"`
+	InternalReasoning StringifiedNumber         `json:"internal_reasoning,omitempty"`
+	WebSearch         StringifiedNumber         `json:"web_search,omitempty"`
+	Discount          float64                   `json:"discount"`
+	DisplayPricing    []FrontendDisplayPricing  `json:"display_pricing,omitempty"`
+	LineItems         []FrontendLineItem        `json:"line_items,omitempty"`
+	Overrides         []FrontendPricingOverride `json:"overrides,omitempty"`
 }
 
 // FrontendDisplayPricing represents a human-readable pricing line item.
@@ -228,6 +229,23 @@ type FrontendVariablePricing struct {
 type FrontendLineItem struct {
 	Type  string `json:"type"`
 	Value string `json:"value"`
+}
+
+// FrontendPricingOverride represents a conditional override of the base pricing. An
+// entry applies only when all of its condition fields match the request, among
+// applicable entries later entries win per price key and keys absent from an
+// entry inherit the base price.
+type FrontendPricingOverride struct {
+	Prompt            StringifiedNumber `json:"prompt,omitempty"`
+	Completion        StringifiedNumber `json:"completion,omitempty"`
+	Audio             StringifiedNumber `json:"audio,omitempty"`
+	InputAudioCache   StringifiedNumber `json:"input_audio_cache,omitempty"`
+	InputCacheRead    StringifiedNumber `json:"input_cache_read,omitempty"`
+	InputCacheWrite   StringifiedNumber `json:"input_cache_write,omitempty"`
+	InputCacheWrite1H StringifiedNumber `json:"input_cache_write_1h,omitempty"`
+	MinPromptTokens   *float64          `json:"min_prompt_tokens,omitempty"`
+	UTCStart          *float64          `json:"utc_start,omitempty"`
+	UTCEnd            *float64          `json:"utc_end,omitempty"`
 }
 
 // FrontendRoutingHeuristics represents throughput, latency and routing statistics for an endpoint.
